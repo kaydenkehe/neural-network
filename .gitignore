@@ -1,2 +1,3 @@
 .vscode/
 src/sandbnox.egg-info/
+src/sandbox/__pycache__/
