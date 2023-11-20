@@ -24,7 +24,6 @@ test_y = test_y.reshape((1, test_y.shape[0]))
 train_x = train_x.reshape(train_x.shape[0], -1).T / 255
 test_x = test_x.reshape(test_x.shape[0], -1).T / 255
 
-
 # Create and train model
 
 config = {
