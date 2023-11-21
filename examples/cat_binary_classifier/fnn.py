@@ -31,7 +31,7 @@ model = model.Model()
 model.add(layers.Dense(units=20, activation=activations.ReLU()))
 model.add(layers.Dense(units=7, activation=activations.ReLU()))
 model.add(layers.Dense(units=5, activation=activations.ReLU()))
-model.add(layers.Dense(units=1, activation=activations.Sigmoid()))
+model.add(layers.Dense(units=1, activation=activations.SLU()))
 
 model.configure(learning_rate=0.0075, epochs=2500, cost_type=costs.BinaryCrossentropy())
 model.train(train_x, train_y, verbose=True)

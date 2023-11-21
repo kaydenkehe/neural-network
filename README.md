@@ -18,15 +18,15 @@ model = model.Model()
 
 Add layers to the model:
 ```{python}
-model.add(layers.Dense(units=20, activation=activations.ReLU))
-model.add(layers.Dense(units=7, activation=activations.ReLU))
-model.add(layers.Dense(units=5, activation=activations.ReLU))
-model.add(layers.Dense(units=1, activation=activations.Sigmoid))
+model.add(layers.Dense(units=20, activation=activations.ReLU())
+model.add(layers.Dense(units=7, activation=activations.ReLU()))
+model.add(layers.Dense(units=5, activation=activations.ReLU()))
+model.add(layers.Dense(units=1, activation=activations.Sigmoid()))
 ```
 
 Configure the model:
 ```{python}
-model.configure(learning_rate=0.0075, epochs=2500, cost_type=costs.BinaryCrossentropy)
+model.configure(learning_rate=0.0075, epochs=2500, cost_type=costs.BinaryCrossentropy())
 ```
 
 Train the model:
@@ -41,9 +41,26 @@ pred = model.predict(test_x)
 
 ## Features
 
+**General Abilities:**
+- Binary Classification
+
 **Activation Functions**
+- Linear
 - Sigmoid
 - ReLU
+- Tanh
+- Heaviside
+- Signum
+- ELU (Exponential Linear Units)
+- SELU (Scaled Exponential Linear Units)
+- SLU (Sigmoid Linear Units)
+- Softplus
+- Softsign
+- BentIdentity
+- Gaussian
+- Arctan
+- PiecewiseLinear
+- DoubleExponential
 
 **Cost Functions**
 - BinaryCrossentropy
