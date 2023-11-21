@@ -12,7 +12,7 @@ class Sigmoid:
         s = 1/(1+np.exp(-cache))
         return dA * s * (1-s)
 
-class Relu():
+class ReLU():
     # max(0,z)
     @staticmethod
     def forward(Z):

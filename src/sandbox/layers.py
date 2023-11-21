@@ -25,4 +25,3 @@ class Dense():
         dA_prev = np.dot(W.T, dZ) # Calculate derivative with respect to the activation of the previous layer
 
         return dA_prev, dW, db
-    

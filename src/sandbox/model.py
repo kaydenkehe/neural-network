@@ -3,11 +3,14 @@ import numpy as np
 class Model:
     layers = []
     parameters = []
-    
+
+    # Configurable values
+    cost_type = None
+    learning_rate = 0.0075
+    epochs = 3000
 
     def add(self, layer):
         self.layers.append(layer)
-
 
     # Predict given input values and weights / biases
     # TODO: Add support for other types of output
@@ -19,26 +22,27 @@ class Model:
                 p[0, i] = 1 if probabilities[0, i] > 0.5 else 0 # Transform prediction into 1 or 0
             return p
 
+    def configure(self, cost_type, learning_rate = 0.0075, epochs = 3000):
+        self.cost_type = cost_type
+        self.learning_rate = learning_rate
+        self.epochs = epochs
 
-    def train(self, X, Y, cost_type, learning_rate = 0.0075, epochs = 3000, print_cost=False):
-        # TODO: Add support for different layer types
-        layer_dims = [len(X)] + [layer.units for layer in self.layers]
-        self.initialize_parameters(layer_dims) # Initialize random parameters
+    def train(self, X, Y, verbose=False):
+        self.initialize_parameters(input_size=X.shape[0]) # Initialize random parameters
         costs = []
 
         # Loop through epochs
-        for i in range(epochs):
+        for i in range(self.epochs):
             AL, caches = self.model_forward(X) # Forward propagate
-            cost = cost_type.forward(AL, Y) # Calculate cost
-            grads = self.model_backward(AL, Y, caches, cost_type) # Calculate gradient
-            self.update_parameters(grads, learning_rate) # Update weights and biases
+            cost = self.cost_type.forward(AL, Y) # Calculate cost
+            grads = self.model_backward(AL, Y, caches, self.cost_type) # Calculate gradient
+            self.update_parameters(grads, self.learning_rate) # Update weights and biases
             
-            if print_cost and i % 100 == 0 or i == epochs - 1:
+            if verbose and i % 100 == 0 or i == self.epochs - 1:
                 print("Cost after iteration {}: {}".format(i, np.squeeze(cost))) # Optional, output progress
 
-            if i % 100 == 0 or i == epochs:
+            if i % 100 == 0 or i == self.epochs:
                 costs.append(cost) # Update costs list
-
 
     # Forward propagate through model
     def model_forward(self, X):
@@ -47,17 +51,15 @@ class Model:
 
         # Loop through hidden layers, calculating activations
         for layer in range(len(self.layers)):
-            A, cache = self.layers[layer].forward(A, self.parameters[layer]['W'], self.parameters[layer]['b'])
+            A, cache = self.layers[layer].forward(A, **self.parameters[layer])
             caches.append(cache)
 
         return A, caches
 
-
     # Find derivative with respect to each activation, weight, and bias
     def model_backward(self, AL, Y, caches, cost):
         grads = [None] * len(self.layers)
-        Y = Y.reshape(AL.shape)
-        dA_prev = cost.backward(AL, Y) # Find derivative of cost with respect to final activation
+        dA_prev = cost.backward(AL, Y.reshape(AL.shape)) # Find derivative of cost with respect to final activation
         
         # Find dA, dW, and db for all layers
         for layer in reversed(range(len(self.layers))):
@@ -67,21 +69,17 @@ class Model:
             
         return grads
 
-
     # Update parameters using gradient
     def update_parameters(self, grads, learning_rate):
-        for layer in range(len(self.layers)): # Loop through weights and biases
+        for layer in range(len(self.layers)):
             self.parameters[layer]['b'] -= learning_rate * grads[layer]['db'] # Update biases for layer
             self.parameters[layer]['W'] -= learning_rate * grads[layer]['dW'] # Update weights for layer
-            
 
     # Initialize weights and biases
-    def initialize_parameters(self, layer_dims):
-        np.random.seed(1)
-        self.parameters = [None] * len(self.layers)
-
-        for layer in range(len(self.layers)):
-            self.parameters[layer] = {
-                'W': np.random.randn(layer_dims[layer + 1], layer_dims[layer]) / np.sqrt(layer_dims[layer]), # Gaussian random dist for weights
-                'b': np.zeros((layer_dims[layer + 1], 1)) # Zeros for biases
-            }
+    def initialize_parameters(self, input_size):
+        # We start on layer -1 to handle the parameters connecting the input layer to the first hidden layer
+        self.parameters = [{
+            'W': np.random.randn(self.layers[layer + 1].units, self.layers[layer].units if layer != -1 else input_size) / np.sqrt(self.layers[layer].units if layer != -1 else input_size), # Gaussian random dist for weights
+            'b': np.zeros((self.layers[layer + 1].units, 1)) # Zeros for biases
+        } for layer in range(-1, len(self.layers) - 1)]
+        
