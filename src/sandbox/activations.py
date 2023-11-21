@@ -1,18 +1,20 @@
 import numpy as np
 
 class Linear:
-    k = 1
+    def __init__(self, k=1):
+        self.k = k
 
     # kz
-    @staticmethod
-    def forward(self, Z, k=1):
-        self.k = k
-        return k * Z
+    def forward(self, Z):
+        return self.k * Z
 
     def backward(self, Z):
         return self.k
 
 class Sigmoid:
+    def __init__(self):
+        pass
+
     # (1 / 1 + e^-z)
     def forward(self, Z):
         return 1 / (1 + np.exp(-Z))
@@ -23,6 +25,9 @@ class Sigmoid:
         return s * (1 - s)
 
 class ReLU():
+    def __init__(self):
+        pass
+
     # max(0,z)
     def forward(self, Z):
         return np.maximum(0, Z)

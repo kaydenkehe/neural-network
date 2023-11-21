@@ -1,8 +1,10 @@
 import numpy as np
 
 class Model:
-    layers = []
-    parameters = []
+    layers = [] # Each item is a layer object
+    parameters = [] # Each item is a dictionary with a 'W' and 'b' matrix for the weights and biases respectively
+    caches = [] # Each item is a dictionary with the 'A_prev', 'W', 'b', and 'Z' values for the layer
+    costs = [] # Each item is the cost for the epoch
 
     def add(self, layer):
         self.layers.append(layer)
@@ -10,11 +12,8 @@ class Model:
     # Predict given input values and weights / biases
     def predict(self, X, type):
         if type == 'binary_classification':
-            p = np.zeros((1, X.shape[1])) # Empty row vector for outputs
-            probabilities, _ = self.model_forward(X) # Model outputs
-            for i in range(0, probabilities.shape[1]):
-                p[0, i] = 1 if probabilities[0, i] > 0.5 else 0 # Transform prediction into 1 or 0
-            return p
+            probabilities = self.model_forward(X) # Model outputs
+            return np.where(probabilities > 0.5, 1, 0)
 
     def configure(self, cost_type, learning_rate = 0.0075, epochs = 3000):
         self.cost_type = cost_type
@@ -23,42 +22,45 @@ class Model:
 
     def train(self, X, Y, verbose=False):
         self.initialize_parameters(input_size=X.shape[0]) # Initialize random parameters
-        costs = []
+        self.costs = []
 
         # Loop through epochs
-        for i in range(self.epochs):
-            AL, caches = self.model_forward(X) # Forward propagate
+        for i in range(self.epochs + 1):
+            AL = self.model_forward(X) # Forward propagate
             cost = self.cost_type.forward(AL, Y) # Calculate cost
-            grads = self.model_backward(AL, Y, caches, self.cost_type) # Calculate gradient
+            grads = self.model_backward(AL, Y, self.cost_type) # Calculate gradient
             self.update_parameters(grads, self.learning_rate) # Update weights and biases
+            self.costs.append(cost) # Update costs list
             
-            if verbose and i % 100 == 0 or i == self.epochs - 1:
+            if verbose and i % 100 == 0 or i == self.epochs:
                 print("Cost after epoch {}: {}".format(i, np.squeeze(cost))) # Optional, output progress
 
-            if i % 100 == 0 or i == self.epochs:
-                costs.append(cost) # Update costs list
-
     # Forward propagate through model
-    def model_forward(self, X):
-        caches = []
-        A = X
+    def model_forward(self, A):
+        self.caches = []
 
         # Loop through hidden layers, calculating activations
         for layer in range(len(self.layers)):
-            A, cache = self.layers[layer].forward(A, **self.parameters[layer])
-            caches.append(cache)
+            A_prev = A
+            A, Z = self.layers[layer].forward(A_prev, **self.parameters[layer])
+            self.caches.append({
+                'A_prev': A_prev,
+                "W": self.parameters[layer]['W'],
+                "b": self.parameters[layer]['b'],
+                "Z": Z
+            })
 
-        return A, caches
+        return A
 
     # Find derivative with respect to each activation, weight, and bias
-    def model_backward(self, AL, Y, caches, cost):
+    def model_backward(self, AL, Y, cost):
         grads = [None] * len(self.layers)
         dA_prev = cost.backward(AL, Y.reshape(AL.shape)) # Find derivative of cost with respect to final activation
         
         # Find dA, dW, and db for all layers
         for layer in reversed(range(len(self.layers))):
-            cache = caches[layer]
-            dA_prev, dW, db = self.layers[layer].backward(dA_prev, cache)
+            cache = self.caches[layer]
+            dA_prev, dW, db = self.layers[layer].backward(dA_prev, **cache)
             grads[layer] = {'dW': dW, 'db': db}
             
         return grads

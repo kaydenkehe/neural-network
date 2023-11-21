@@ -33,7 +33,7 @@ model.add(layers.Dense(units=7, activation=activations.ReLU()))
 model.add(layers.Dense(units=5, activation=activations.ReLU()))
 model.add(layers.Dense(units=1, activation=activations.Sigmoid()))
 
-model.configure(learning_rate=0.0075, epochs=2500, cost_type=costs.BinaryCrossentropy)
+model.configure(learning_rate=0.0075, epochs=2500, cost_type=costs.BinaryCrossentropy())
 model.train(train_x, train_y, verbose=True)
 
 # Assess model accuracy
@@ -41,6 +41,7 @@ pred_train = model.predict(train_x, type='binary_classification') # Get model ac
 print('Training Accuracy: '  + str(np.sum((pred_train == train_y)/train_x.shape[1])))
 pred_test = model.predict(test_x, type='binary_classification') # Get model accuracy on testing data
 print('Testing Accuracy: '  + str(np.sum((pred_test == test_y)/test_x.shape[1])))
+print(pred_test)
 
 # Use model on custom image
 my_image = 'cat.jpg' 
