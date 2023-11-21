@@ -5,18 +5,18 @@ class Dense():
         self.units = units
         self.activation = activation
 
-    # Calculate linear step of neuron activation (W.T * A + b)
+    # Calculate linear step of neuron activation (W^T * A + b)
     def forward(self, A_prev, W, b):
         Z = np.dot(W, A_prev) + b # Compute Z
-        A, activation_cache = self.activation.forward(Z) # Compute A using the given activation function
-        cache = ((A_prev, W, b), activation_cache) # Cache for backprop
+        A = self.activation.forward(Z) # Compute A using the given activation function
+        cache = ((A_prev, W, b), Z) # Cache for backprop
 
         return A, cache
     
     # Find derivative with respect to weights, biases, and activations for a particular layer
     def backward(self, dA, cache):
-        linear_cache, activation_cache = cache
-        dZ = self.activation.backward(dA, activation_cache) # Evaluate dZ using the derivative of sigmoid or relu
+        linear_cache, Z = cache
+        dZ = dA * self.activation.backward(Z) # Evaluate dZ using the derivative of activation function
         A_prev, W, _ = linear_cache
         m = A_prev.shape[1]
 

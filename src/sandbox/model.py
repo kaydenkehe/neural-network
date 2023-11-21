@@ -8,7 +8,6 @@ class Model:
         self.layers.append(layer)
 
     # Predict given input values and weights / biases
-    # TODO: Add support for other types of output
     def predict(self, X, type):
         if type == 'binary_classification':
             p = np.zeros((1, X.shape[1])) # Empty row vector for outputs
@@ -34,7 +33,7 @@ class Model:
             self.update_parameters(grads, self.learning_rate) # Update weights and biases
             
             if verbose and i % 100 == 0 or i == self.epochs - 1:
-                print("Cost after iteration {}: {}".format(i, np.squeeze(cost))) # Optional, output progress
+                print("Cost after epoch {}: {}".format(i, np.squeeze(cost))) # Optional, output progress
 
             if i % 100 == 0 or i == self.epochs:
                 costs.append(cost) # Update costs list
@@ -58,8 +57,8 @@ class Model:
         
         # Find dA, dW, and db for all layers
         for layer in reversed(range(len(self.layers))):
-            current_cache = caches[layer]
-            dA_prev, dW, db = self.layers[layer].backward(dA_prev, current_cache)
+            cache = caches[layer]
+            dA_prev, dW, db = self.layers[layer].backward(dA_prev, cache)
             grads[layer] = {'dW': dW, 'db': db}
             
         return grads
