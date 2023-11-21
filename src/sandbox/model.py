@@ -4,11 +4,6 @@ class Model:
     layers = []
     parameters = []
 
-    # Configurable values
-    cost_type = None
-    learning_rate = 0.0075
-    epochs = 3000
-
     def add(self, layer):
         self.layers.append(layer)
 
