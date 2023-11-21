@@ -1,6 +1,3 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
-setup(
-    name = 'sandbox',
-    packages = find_packages(),
-)
+setup(name = 'sandbox')
