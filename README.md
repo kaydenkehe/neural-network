@@ -1,5 +1,5 @@
 # Neural Network
-This repo contains a neural network built from scratch in Python. The project is more of a learning exercise for myself than anything else, and I intend on continuing to add features as I find time / motivation / when I get bored. 
+This repo contains a neural network built from scratch in Python. This project is more of a learning exercise for myself than anything else, and I intend on continuing to add features as I find time / motivation / when I get bored. 
 
 ## Setup
 Install the package: `python -m pip install -e $path to /src$`
