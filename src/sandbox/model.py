@@ -6,15 +6,13 @@ class Model:
     caches = [] # Each item is a dictionary with the 'A_prev', 'W', 'b', and 'Z' values for the layer
     costs = [] # Each item is the cost for the epoch
 
-
     def add(self, layer):
         self.layers.append(layer)
 
     # Predict given input values and weights / biases
-    def predict(self, X, type):
-        if type == 'binary_classification':
-            probabilities = self.model_forward(X) # Model outputs
-            return np.where(probabilities > 0.5, 1, 0)
+    def predict(self, X, prediction_type=lambda x: x):
+        prediction = self.model_forward(X) # Model outputs
+        return prediction_type(prediction)
 
     # Configure model parameters
     def configure(self, cost_type, learning_rate = 0.0075, epochs = 3000):

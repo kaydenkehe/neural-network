@@ -8,7 +8,7 @@ Install the package: `python -m pip install -e $path to /src$`
 
 Import required packages:
 ```{python}
-from sandbox import model, layers, activations, costs
+from sandbox import model, layers, activations, costs, predictions
 ```
 
 Create the model:
@@ -18,7 +18,7 @@ model = model.Model()
 
 Add layers to the model:
 ```{python}
-model.add(layers.Dense(units=20, activation=activations.ReLU())
+model.add(layers.Dense(units=20, activation=activations.ReLU()))
 model.add(layers.Dense(units=7, activation=activations.ReLU()))
 model.add(layers.Dense(units=5, activation=activations.ReLU()))
 model.add(layers.Dense(units=1, activation=activations.Sigmoid()))
@@ -36,7 +36,7 @@ model.train(train_x, train_y, verbose=True)
 
 Predict with the model:
 ```{python}
-pred = model.predict(test_x)
+pred = model.predict(image, prediction_type=predictions.binary_classification)
 ```
 
 ## Features
