@@ -6,6 +6,7 @@ class Model:
     caches = [] # Each item is a dictionary with the 'A_prev', 'W', 'b', and 'Z' values for the layer
     costs = [] # Each item is the cost for the epoch
 
+
     def add(self, layer):
         self.layers.append(layer)
 
