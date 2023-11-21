@@ -1,7 +1,6 @@
 import numpy as np
 
-# Cross-Entropy
-# For binary classification
+# Cross-Entropy - Binary classification
 class BinaryCrossentropy:
     def __init__(self):
         pass

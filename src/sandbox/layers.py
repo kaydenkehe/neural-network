@@ -5,7 +5,7 @@ class Dense():
         self.units = units
         self.activation = activation
 
-    # Calculate linear step of neuron activation (W^T * A + b)
+    # Calculate layer neuron activations phi(W^T * A + b)
     def forward(self, A_prev, W, b):
         Z = np.dot(W, A_prev) + b # Compute Z
         A = self.activation.forward(Z) # Compute A using the given activation function

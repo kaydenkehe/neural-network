@@ -15,11 +15,13 @@ class Model:
             probabilities = self.model_forward(X) # Model outputs
             return np.where(probabilities > 0.5, 1, 0)
 
+    # Configure model parameters
     def configure(self, cost_type, learning_rate = 0.0075, epochs = 3000):
         self.cost_type = cost_type
         self.learning_rate = learning_rate
         self.epochs = epochs
 
+    # Train model
     def train(self, X, Y, verbose=False):
         self.initialize_parameters(input_size=X.shape[0]) # Initialize random parameters
         self.costs = []

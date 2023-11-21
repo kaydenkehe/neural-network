@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class Linear:
     def __init__(self, k=1):
         self.k = k
@@ -11,7 +10,6 @@ class Linear:
 
     def backward(self, Z):
         return self.k
-
 
 class Sigmoid:
     def __init__(self, c=1):
@@ -26,7 +24,6 @@ class Sigmoid:
         s = self.forward(Z)
         return self.c * s * (1 - s)
 
-
 class ReLU(): # Rectified Linear Units
     def __init__(self):
         pass
@@ -38,7 +35,6 @@ class ReLU(): # Rectified Linear Units
     # 0 if z <= 0, 1 if z > 0
     def backward(self, Z):
         return np.where(Z <= 0, 0, 1)
-
 
 class LeakyReLU():
     def __init__(self, alpha=0.01):
@@ -52,7 +48,6 @@ class LeakyReLU():
     def backward(self, Z):
         return np.where(Z <= 0, self.alpha, 1)
     
-
 class Tanh():
     def __init__(self):
         pass
@@ -65,7 +60,6 @@ class Tanh():
     def backward(self, Z):
         return 1 - self.forward(Z) ** 2
 
-
 class Heaviside():
     def __init__(self):
         pass
@@ -77,7 +71,6 @@ class Heaviside():
     # 0
     def backward(self, Z):
         return 0
-    
 
 class Signum():
     def __init__(self):
@@ -91,7 +84,6 @@ class Signum():
     def backward(self, Z):
         return 0
 
-
 class ELU(): # Exponential Linear Units
     def __init__(self, alpha=1):
         self.alpha = alpha
@@ -104,7 +96,6 @@ class ELU(): # Exponential Linear Units
     def backward(self, Z):
         return np.where(Z < 0, self.alpha * np.exp(Z), 1)
     
-
 class SELU(): # Scaled Exponential Linear Units
     def __init__(self, alpha=1, scale=1):
         self.alpha = alpha
@@ -117,7 +108,6 @@ class SELU(): # Scaled Exponential Linear Units
     # scale * alpha * e^z if z < 0, scale otherwise
     def backward(self, Z):
         return self.scale * np.where(Z < 0, self.alpha * np.exp(Z), 1)
-    
 
 class SLU(): # Sigmoid Linear Units
     def __init__(self):
@@ -132,7 +122,6 @@ class SLU(): # Sigmoid Linear Units
         s = Sigmoid()
         return s.forward(Z) * (1 + Z * s.forward(-Z))
     
-
 class Softplus():
     def __init__(self):
         pass
@@ -144,7 +133,6 @@ class Softplus():
     # 1 / (1 + e^-z)
     def backward(self, Z):
         return 1 / (1 + np.exp(-Z))
-    
 
 class Softsign():
     def __init__(self):
@@ -158,7 +146,6 @@ class Softsign():
     def backward(self, Z):
         return 1 / (1 + np.abs(Z)) ** 2
     
-
 class BentIdentity():
     def __init__(self):
         pass
@@ -170,7 +157,6 @@ class BentIdentity():
     # (z / (2 * sqrt(z^2 + 1))) + 1
     def backward(self, Z):
         return (Z / (2 * np.sqrt(Z ** 2 + 1))) + 1
-    
 
 class Gaussian():
     def __init__(self):
@@ -183,7 +169,6 @@ class Gaussian():
     # -2z * e^-z^2
     def backward(self, Z):
         return -2 * Z * np.exp(-Z ** 2)
-    
 
 class Arctan():
     def __init__(self):
@@ -196,7 +181,6 @@ class Arctan():
     # 1 / (z^2 + 1)
     def backward(self, Z):
         return 1 / (Z ** 2 + 1)
-    
 
 class PiecewiseLinear():
     def __init__(self, alpha=1):
@@ -210,7 +194,6 @@ class PiecewiseLinear():
     def backward(self, Z):
         return np.where(Z <= -self.alpha, 0, np.where(Z >= self.alpha, 0, 1 / self.alpha))
     
-
 class DoubleExponential():
     def __init__(self, lambda_=1):
         self.lambda_ = lambda_
