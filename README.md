@@ -64,6 +64,8 @@ pred = model.predict(image, prediction_type=predictions.binary_classification)
 
 **Cost Functions**
 - BinaryCrossentropy
+- MSE (Mean Squared Error)
+- MAE (Mean Absolute Error)
 
 **Layer Types**
 - Dense

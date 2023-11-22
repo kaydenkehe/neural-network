@@ -24,6 +24,7 @@ test_y = test_y.reshape((1, test_y.shape[0]))
 train_x = train_x.reshape(train_x.shape[0], -1).T / 255
 test_x = test_x.reshape(test_x.shape[0], -1).T / 255
 
+
 # Create and train model
 np.random.seed(1)
 
@@ -35,6 +36,7 @@ model.add(layers.Dense(units=1, activation=activations.Sigmoid()))
 
 model.configure(learning_rate=0.0075, epochs=2500, cost_type=costs.BinaryCrossentropy())
 model.train(train_x, train_y, verbose=True)
+
 
 # Assess model accuracy
 pred_train = model.predict(train_x, prediction_type=predictions.binary_classification) # Get model accuracy on training data

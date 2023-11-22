@@ -79,4 +79,3 @@ class Model:
             'W': np.random.randn(self.layers[layer + 1].units, self.layers[layer].units if layer != -1 else input_size) / np.sqrt(self.layers[layer].units if layer != -1 else input_size), # Gaussian random dist for weights
             'b': np.zeros((self.layers[layer + 1].units, 1)) # Zeros for biases
         } for layer in range(-1, len(self.layers) - 1)]
-        
