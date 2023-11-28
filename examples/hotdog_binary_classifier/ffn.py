@@ -24,14 +24,13 @@ test_y = np.concatenate((np.ones((datasets[2].shape[0], 1)), np.zeros((datasets[
 
 # Create model
 
-model = model.Model()
-model.add(layers.Dense(units=30, activation=activations.ReLU()))
+model = model.Model(cuda=True)
+model.add(layers.Dense(units=50, activation=activations.ReLU()))
 model.add(layers.Dense(units=20, activation=activations.ReLU()))
-model.add(layers.Dense(units=10, activation=activations.ReLU()))
 model.add(layers.Dense(units=5, activation=activations.ReLU()))
 model.add(layers.Dense(units=1, activation=activations.Sigmoid()))
 
-model.configure(learning_rate=0.005, epochs=10000, cost_type=costs.BinaryCrossentropy(), cuda=True)
+model.configure(learning_rate=0.01, epochs=10000, cost_type=costs.BinaryCrossentropy())
 model.train(train_x, train_y, verbose=True)
 
 # Assess model accuracy

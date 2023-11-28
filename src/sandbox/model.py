@@ -114,7 +114,6 @@ class Model:
     # Save parameters to JSON file
     def save(self, name='parameters.json', dir=''):
         jsonified_params = [{'W': layer['W'].tolist(), 'b': layer['b'].tolist()} for layer in self.parameters]
-
         with open(dir + name, 'w') as file:
             json.dump(jsonified_params, file)
 
