@@ -1,4 +1,7 @@
-import numpy as np
+# Handle conditional imports
+def configure_imports(cuda):
+    global np
+    np = __import__('cupy' if cuda else 'numpy')
 
 class Linear:
     def __init__(self, k=1):
