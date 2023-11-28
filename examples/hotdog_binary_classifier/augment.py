@@ -39,4 +39,3 @@ for dir in ['\\train\\hotdog\\', '\\train\\nothotdog\\', '\\test\\hotdog\\', '\\
         #     img.save(f'altered{dir}{i}{j}.jpg')
 
         img.save(f'altered{dir}{i}.jpg')
-        

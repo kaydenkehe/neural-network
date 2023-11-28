@@ -29,21 +29,23 @@ test_x = test_x.reshape(test_x.shape[0], -1) / 255
 # Create and train model
 np.random.seed(1)
 
-model = model.Model()
+model = model.Model(cuda=True)
 model.add(layers.Dense(units=20, activation=activations.ReLU()))
 model.add(layers.Dense(units=7, activation=activations.ReLU()))
 model.add(layers.Dense(units=5, activation=activations.ReLU()))
 model.add(layers.Dense(units=1, activation=activations.Sigmoid()))
 
-model.configure(learning_rate=0.0075, epochs=1500, cost_type=costs.BinaryCrossentropy(), cuda=True)
+model.configure(learning_rate=0.0075, epochs=1500, cost_type=costs.BinaryCrossentropy())
 model.train(train_x, train_y, verbose=True)
 
+# Save model parameters
+model.save()
 
 # Assess model accuracy
 pred_train = model.predict(train_x, prediction_type=predictions.binary_classification) # Get model accuracy on training data
-print('\nTraining Accuracy: '  + str(np.sum((pred_train == train_y)/train_x.shape[0])))
+print('\nTraining Accuracy: '  + str(np.round(np.sum((pred_train == train_y)/train_x.shape[0]), decimals=5)))
 pred_test = model.predict(test_x, prediction_type=predictions.binary_classification) # Get model accuracy on testing data
-print('Testing Accuracy: '  + str(np.sum((pred_test == test_y)/test_x.shape[0])))
+print('Testing Accuracy: '  + str(np.round(np.sum((pred_test == test_y)/test_x.shape[0]), decimals=5)))
 
 # Use model on custom image
 my_image = 'cat.jpg' 

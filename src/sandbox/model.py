@@ -1,3 +1,5 @@
+import json
+
 # Handle conditional imports
 def configure_imports(cuda):
     global np
@@ -9,27 +11,23 @@ class Model:
     caches = [] # Each item is a dictionary with the 'A_prev', 'W', 'b', and 'Z' values for the layer
     costs = [] # Each item is the cost for the epoch
 
-    # Add layer to model
-    def add(self, layer):
-        self.layers.append(layer)
-
-    # Predict given input values and weights / biases
-    def predict(self, X, prediction_type=lambda x: x):
-        prediction = self.model_forward(X.T).T # Model outputs
-        return prediction_type(prediction)
-
-    # Configure model parameters
-    def configure(self, cost_type, learning_rate = 0.0075, epochs = 3000, cuda=False):
-        self.cost_type = cost_type
-        self.learning_rate = learning_rate
-        self.epochs = epochs
-
-        # Run 'conditional_imports()' in all modules in sandbox
+    def __init__(self, cuda=False):
+        # Run 'configure_imports()' in all modules in sandbox
         # I dislike this solution.
         # TODO: Make this less shitty
         import sandbox, inspect
         for module, _ in inspect.getmembers(sandbox, inspect.ismodule):
             exec(f'sandbox.{module}.configure_imports(cuda)')
+
+    # Add layer to model
+    def add(self, layer):
+        self.layers.append(layer)
+
+    # Configure model parameters
+    def configure(self, cost_type, learning_rate = 0.0075, epochs = 3000):
+        self.cost_type = cost_type
+        self.learning_rate = learning_rate
+        self.epochs = epochs
 
     # Train model
     def train(self, X, Y, verbose=False):
@@ -47,7 +45,29 @@ class Model:
             self.costs.append(cost) # Update costs list
             
             if verbose and i % 100 == 0 or i == self.epochs:
-                print(f"Cost on epoch {i}: {cost.item()}") # Optional, output progress
+                print(f"Cost on epoch {i}: {round(cost.item(), 5)}") # Optional, output progress
+
+    # Initialize weights and biases
+    def initialize_parameters(self, input_size):
+        # We only want to initialize parameters for trainable layers (excluding dropout, for example)
+        trainable_layers = [layer for layer in self.layers if layer.trainable]
+
+        # We start on layer -1 to handle the parameters connecting the input layer to the first hidden layer
+        self.parameters = [{
+            'W': np.random.randn(trainable_layers[layer + 1].units, trainable_layers[layer].units if layer != -1 else input_size) / np.sqrt(trainable_layers[layer].units if layer != -1 else input_size), # Gaussian random dist for weights
+            'b': np.zeros((trainable_layers[layer + 1].units, 1)) # Zeros for biases
+        } for layer in range(-1, len(trainable_layers) - 1)]
+
+        # For non-train layers, we want to set the parameters to None
+        for layer in range(len(self.layers)):
+            if not self.layers[layer].trainable:
+                self.parameters.insert(layer, {'W': None, 'b': None})
+
+    # Shuffle data
+    def shuffle(self, X, Y):
+        assert X.shape[1] == Y.shape[1]
+        permutation = np.random.permutation(X.shape[1])
+        return X[:, permutation], Y[:, permutation]
 
     # Forward propagate through model
     def model_forward(self, A):
@@ -86,26 +106,20 @@ class Model:
                 self.parameters[layer]['b'] -= learning_rate * grads[layer]['db'] # Update biases for layer
                 self.parameters[layer]['W'] -= learning_rate * grads[layer]['dW'] # Update weights for layer
 
-    # Shuffle data
-    def shuffle(self, X, Y):
-        assert X.shape[1] == Y.shape[1]
-        permutation = np.random.permutation(X.shape[1])
-        return X[:, permutation], Y[:, permutation]
+    # Predict given input values and weights / biases
+    def predict(self, X, prediction_type=lambda x: x):
+        prediction = self.model_forward(X.T).T # Model outputs
+        return prediction_type(prediction)
 
-    # Initialize weights and biases
-    def initialize_parameters(self, input_size):
-        # We only want to initialize parameters for trainable layers (excluding dropout, for example)
-        trainable_layers = [layer for layer in self.layers if layer.trainable]
+    # Save parameters to JSON file
+    def save(self, name='parameters.json', dir=''):
+        jsonified_params = [{'W': layer['W'].tolist(), 'b': layer['b'].tolist()} for layer in self.parameters]
 
-        # We start on layer -1 to handle the parameters connecting the input layer to the first hidden layer
-        self.parameters = [{
-            'W': np.random.randn(trainable_layers[layer + 1].units, trainable_layers[layer].units if layer != -1 else input_size) / np.sqrt(trainable_layers[layer].units if layer != -1 else input_size), # Gaussian random dist for weights
-            'b': np.zeros((trainable_layers[layer + 1].units, 1)) # Zeros for biases
-        } for layer in range(-1, len(trainable_layers) - 1)]
+        with open(dir + name, 'w') as file:
+            json.dump(jsonified_params, file)
 
-        # For non-train layers, we want to set the parameters to None
-        for layer in range(len(self.layers)):
-            if not self.layers[layer].trainable:
-                self.parameters.insert(layer, {'W': None, 'b': None})
-
-# TODO: Implement parameter saving and loading
+    # Load parameters from JSON file
+    def load(self, name='parameters.json', dir=''):
+        with open(dir + name, 'r') as file:
+            jsonified_params = json.load(file)
+        self.parameters = [{'W': np.array(layer['W']), 'b': np.array(layer['b'])} for layer in jsonified_params]
