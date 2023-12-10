@@ -75,6 +75,7 @@ model.load(name='parameters.json', dir='')
 
 **Layer Types**
 - Dense
+- Dropout
 
 ## (Hopefully) Upcoming Features
 
