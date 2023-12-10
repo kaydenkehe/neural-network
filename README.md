@@ -13,7 +13,7 @@ from sandbox import model, layers, activations, costs, predictions
 
 Create the model:
 ```{python}
-model = model.Model()
+model = model.Model(cuda=True)
 ```
 
 Add layers to the model:
@@ -37,6 +37,12 @@ model.train(train_x, train_y, verbose=True)
 Predict with the model:
 ```{python}
 pred = model.predict(image, prediction_type=predictions.binary_classification)
+```
+
+Save / load model parameters:
+```{python}
+model.save(name='parameters.json', dir='')
+model.load(name='parameters.json', dir='')
 ```
 
 ## Features
