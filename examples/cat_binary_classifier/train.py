@@ -8,11 +8,11 @@ from sandbox import model, layers, activations, costs, predictions
 chdir(path.dirname(path.abspath(__file__)))
 
 # Load data
-train_dataset = File('train_catvnoncat.h5', 'r')
+train_dataset = File('dataset\\train_catvnoncat.h5', 'r')
 train_x = np.array(train_dataset['train_set_x'][:]) # Train set features
 train_y = np.array(train_dataset['train_set_y'][:]) # Train set labels
 
-test_dataset = File('test_catvnoncat.h5', 'r')
+test_dataset = File('dataset\\test_catvnoncat.h5', 'r')
 test_x = np.array(test_dataset['test_set_x'][:]) # Test set features
 test_y = np.array(test_dataset['test_set_y'][:]) # Test set labels
 
@@ -48,7 +48,7 @@ pred_test = model.predict(test_x, prediction_type=predictions.binary_classificat
 print('Testing Accuracy: '  + str(np.round(np.sum((pred_test == test_y)/test_x.shape[0]), decimals=5)))
 
 # Use model on custom image
-my_image = 'cat.jpg' 
+my_image = 'dataset\\cat.jpg' 
 my_label_y = [1] # 1: cat, 0: non-cat
 num_px = 64
 

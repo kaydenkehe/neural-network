@@ -16,7 +16,7 @@ model.add(layers.Dense(units=1, activation=activations.Sigmoid()))
 model.load('parameters.json')
 
 # Load test data
-test_dataset = File('test_catvnoncat.h5', 'r')
+test_dataset = File('dataset\\test_catvnoncat.h5', 'r')
 test_x = np.array(test_dataset['test_set_x'][:]) # Test set features
 test_y = np.array(test_dataset['test_set_y'][:]) # Test set labels
 test_y = test_y.reshape((test_y.shape[0], 1))

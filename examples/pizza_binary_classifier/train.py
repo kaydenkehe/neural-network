@@ -32,7 +32,6 @@ model.add(layers.Dense(units=1, activation=activations.Sigmoid()))
 
 model.configure(learning_rate=0.01, epochs=2500, cost_type=costs.BinaryCrossentropy())
 model.train(train_x, train_y, verbose=True)
-model.save(name='parameters_temp.json', dir='..\\..\\backend\\')
 
 # Assess model accuracy
 pred_train = model.predict(train_x, prediction_type=predictions.binary_classification) # Get model accuracy on training data
