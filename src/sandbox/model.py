@@ -6,15 +6,17 @@ def configure_imports(cuda):
     np = __import__('cupy' if cuda else 'numpy')
 
 class Model:
-    layers = [] # Each item is a layer object
-    parameters = [] # Each item is a dictionary with a 'W' and 'b' matrix for the weights and biases respectively
-    caches = [] # Each item is a dictionary with the 'A_prev', 'W', 'b', and 'Z' values for the layer - Used in backprop
-    costs = [] # Each item is the cost for the epoch
 
+    # Initialize model
     def __init__(self, cuda=False):
-        # Run 'configure_imports()' in all modules in sandbox
+        self.layers = []
+        self.parameters = []
+        self.caches = []
+        self.costs = []
+
+        # Configure all scripts to run on either CuPy or NumPy
         # I dislike this solution.
-        # TODO: Make this less shitty
+        # TODO: Make this less shittY
         import sandbox, inspect
         for module, _ in inspect.getmembers(sandbox, inspect.ismodule):
             exec(f'sandbox.{module}.configure_imports(cuda)')

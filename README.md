@@ -84,6 +84,8 @@ model.load(name='parameters.json', dir='')
 - Multiclass classification
 - Alternate parameter initialization methods
 - Mini-batch GD, SGD
+- Support for initializing model with layers
+- Add model summary
 
 ## Notes
 
