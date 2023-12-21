@@ -8,7 +8,7 @@ Install the package: `python -m pip install -e <path to /src>`
 
 Import required packages:
 ```{python}
-from sandbox import model, layers, activations, costs, predictions
+from sandbox import model, layers, activations, costs, utils
 ```
 
 Create the model:
@@ -26,7 +26,12 @@ model.add(layers.Dense(units=1, activation=activations.Sigmoid()))
 
 Configure the model:
 ```{python}
-model.configure(learning_rate=0.0075, epochs=2500, cost_type=costs.BinaryCrossentropy())
+model.configure(
+    learning_rate=0.0075,
+    epochs=2500,
+    cost_type=costs.BinaryCrossentropy(),
+    initializer=utils.Initializers.he
+)
 ```
 
 Train the model:
@@ -36,7 +41,7 @@ model.train(train_x, train_y, verbose=True)
 
 Predict with the model:
 ```{python}
-pred = model.predict(image, prediction_type=predictions.binary_classification)
+prediction = model.predict(image, prediction_type=utils.Predictions.binary_classification)
 ```
 
 Save / load model parameters:
@@ -45,10 +50,16 @@ model.save(name='parameters.json', dir='')
 model.load(name='parameters.json', dir='')
 ```
 
-## Features
+## Examples:
+**Binary Classification**
+  - cat_classifier
+  - pizza_classifier 
+  - point_classifier
 
-**General Abilities:**
-- Binary Classification
+**Regression**
+  - mpg_estimator
+
+## Features
 
 **Activation Functions**
 - Linear
@@ -85,7 +96,17 @@ model.load(name='parameters.json', dir='')
 - Alternate parameter initialization methods
 - Mini-batch GD, SGD
 - Support for initializing model with layers
-- Add model summary
+- Model summary
+
+## Shorthand Notation
+Most (if not all) of the shorthand notation in the code is taken from Andrew Ng.
+- X - Inputs
+- Y - Labels
+- A - Activated neuron values
+- AL - Output layer values 
+- Z - Pre-activation neuron values
+- W, b - Weight matrix, bias vector
+- d<W, b, A, AL> - Derivative of value with respect to cost
 
 ## Notes
 

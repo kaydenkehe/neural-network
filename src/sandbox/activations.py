@@ -4,6 +4,7 @@ def configure_imports(cuda):
     np = __import__('cupy' if cuda else 'numpy')
 
 class Linear:
+
     def __init__(self, k=1):
         self.k = k
 
@@ -15,6 +16,7 @@ class Linear:
         return self.k
 
 class Sigmoid:
+
     def __init__(self, c=1):
         self.c = c
 
@@ -28,6 +30,7 @@ class Sigmoid:
         return self.c * s * (1 - s)
 
 class ReLU(): # Rectified Linear Units
+
     def __init__(self):
         pass
 
@@ -40,6 +43,7 @@ class ReLU(): # Rectified Linear Units
         return np.where(Z <= 0, 0, 1)
 
 class LeakyReLU():
+
     def __init__(self, alpha=0.01):
         self.alpha = alpha
 
@@ -52,6 +56,7 @@ class LeakyReLU():
         return np.where(Z <= 0, self.alpha, 1)
     
 class Tanh():
+
     def __init__(self):
         pass
 
@@ -64,6 +69,7 @@ class Tanh():
         return 1 - self.forward(Z) ** 2
 
 class Heaviside():
+
     def __init__(self):
         pass
 
@@ -76,6 +82,7 @@ class Heaviside():
         return 0
 
 class Signum():
+
     def __init__(self):
         pass
 
@@ -88,6 +95,7 @@ class Signum():
         return 0
 
 class ELU(): # Exponential Linear Units
+
     def __init__(self, alpha=1):
         self.alpha = alpha
 
@@ -100,6 +108,7 @@ class ELU(): # Exponential Linear Units
         return np.where(Z < 0, self.alpha * np.exp(Z), 1)
     
 class SELU(): # Scaled Exponential Linear Units
+
     def __init__(self, alpha=1, scale=1):
         self.alpha = alpha
         self.scale = scale
@@ -113,6 +122,7 @@ class SELU(): # Scaled Exponential Linear Units
         return self.scale * np.where(Z < 0, self.alpha * np.exp(Z), 1)
 
 class SLU(): # Sigmoid Linear Units
+
     def __init__(self):
         pass
 
@@ -126,6 +136,7 @@ class SLU(): # Sigmoid Linear Units
         return s.forward(Z) * (1 + Z * s.forward(-Z))
     
 class Softplus():
+
     def __init__(self):
         pass
 
@@ -138,6 +149,7 @@ class Softplus():
         return 1 / (1 + np.exp(-Z))
 
 class Softsign():
+
     def __init__(self):
         pass
 
@@ -150,6 +162,7 @@ class Softsign():
         return 1 / (1 + np.abs(Z)) ** 2
     
 class BentIdentity():
+
     def __init__(self):
         pass
 
@@ -162,6 +175,7 @@ class BentIdentity():
         return (Z / (2 * np.sqrt(Z ** 2 + 1))) + 1
 
 class Gaussian():
+
     def __init__(self):
         pass
 
@@ -174,6 +188,7 @@ class Gaussian():
         return -2 * Z * np.exp(-Z ** 2)
 
 class Arctan():
+
     def __init__(self):
         pass
 
@@ -186,6 +201,7 @@ class Arctan():
         return 1 / (Z ** 2 + 1)
 
 class PiecewiseLinear():
+
     def __init__(self, alpha=1):
         self.alpha = alpha
 
@@ -198,6 +214,7 @@ class PiecewiseLinear():
         return np.where(Z <= -self.alpha, 0, np.where(Z >= self.alpha, 0, 1 / self.alpha))
     
 class DoubleExponential():
+    
     def __init__(self, lambda_=1):
         self.lambda_ = lambda_
 

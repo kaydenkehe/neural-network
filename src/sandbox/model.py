@@ -1,4 +1,6 @@
+import inspect
 import json
+from sandbox import utils
 
 # Handle conditional imports
 def configure_imports(cuda):
@@ -9,15 +11,13 @@ class Model:
 
     # Initialize model
     def __init__(self, cuda=False):
-        self.layers = []
-        self.parameters = []
-        self.caches = []
-        self.costs = []
+        self.layers = [] # Each item is a layer object
+        self.parameters = [] # Each item is a dictionary with a 'W' and 'b' matrix for the weights and biases respectively
+        self.caches = [] # Each item is a dictionary with the 'A_prev', 'W', 'b', and 'Z' values for the layer - Used in backprop
+        self.costs = [] # Each item is the cost for the epoch
 
         # Configure all scripts to run on either CuPy or NumPy
-        # I dislike this solution.
-        # TODO: Make this less shittY
-        import sandbox, inspect
+        import sandbox
         for module, _ in inspect.getmembers(sandbox, inspect.ismodule):
             exec(f'sandbox.{module}.configure_imports(cuda)')
 
@@ -26,8 +26,9 @@ class Model:
         self.layers.append(layer)
 
     # Configure model parameters
-    def configure(self, cost_type, learning_rate = 0.0075, epochs = 3000):
+    def configure(self, cost_type, learning_rate, epochs, initializer=utils.Initializers.he):
         self.cost_type = cost_type
+        self.initializer = initializer
         self.learning_rate = learning_rate
         self.epochs = epochs
 
@@ -35,7 +36,6 @@ class Model:
     def train(self, X, Y, verbose=False):
         X, Y = X.T, Y.T # Transpose X and Y to match shape of weights and biases
         self.initialize_parameters(input_size=X.shape[0]) # Initialize random parameters
-        self.costs = []
 
         # Loop through epochs
         for i in range(self.epochs + 1):
@@ -46,19 +46,14 @@ class Model:
             self.update_parameters(grads, self.learning_rate) # Update weights and biases
             self.costs.append(cost) # Update costs list
             
-            if verbose and i % 100 == 0 or i == self.epochs:
+            if verbose and (i % 100 == 0 or i == self.epochs):
                 print(f"Cost on epoch {i}: {round(cost.item(), 5)}") # Optional, output progress
 
     # Initialize weights and biases
     def initialize_parameters(self, input_size):
-        # We only want to initialize parameters for trainable layers (excluding dropout, for example)
-        trainable_layers = [layer for layer in self.layers if layer.trainable]
-
-        # We start on layer -1 to handle the parameters connecting the input layer to the first hidden layer
-        self.parameters = [{
-            'W': np.random.randn(trainable_layers[layer + 1].units, trainable_layers[layer].units if layer != -1 else input_size) / np.sqrt(trainable_layers[layer].units if layer != -1 else input_size), # Gaussian random dist for weights
-            'b': np.zeros((trainable_layers[layer + 1].units, 1)) # Zeros for biases
-        } for layer in range(-1, len(trainable_layers) - 1)]
+        # Initialize parameters using initializer function
+        layer_sizes = [input_size] + [layer.units for layer in self.layers if layer.trainable]
+        self.parameters = self.initializer(layer_sizes)
 
         # For non-train layers, we want to set the parameters to empty arrays
         for layer in range(len(self.layers)):
@@ -75,7 +70,7 @@ class Model:
     def forward_pass(self, A, train=True):
         self.caches = []
 
-        # Exclude non-trainable layers like dropout when not training
+        # Exclude non-trainable layers (like dropout) when not training
         layers = [i for i in range(len(self.layers)) if self.layers[i].trainable or train]
         
         # Loop through hidden layers, calculating activations
@@ -120,7 +115,7 @@ class Model:
     def save(self, name='parameters.json', dir=''):
         jsonified_params = [
             {'W': layer['W'].tolist(), 'b': layer['b'].tolist()}
-            for layer in [layer for layer in self.parameters if layer['W'].size != 0] # Exclude empty arrays (for dropout layers, for example)
+            for layer in [layer for layer in self.parameters if layer['W'].size != 0] # Exclude empty arrays (dropout layers, for example)
         ]
         with open(dir + name, 'w') as file:
             json.dump(jsonified_params, file)
