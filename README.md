@@ -1,7 +1,9 @@
 # Neural Network
+
 This repo contains a neural network built from scratch in Python. This project is more of a learning exercise for myself than anything else, and I intend on continuing to add features as I find time / motivation / when I get bored.
 
 ## Setup
+
 Install the package: `python -m pip install -e <path to /src>`
 
 ## Usage
@@ -51,6 +53,7 @@ model.load(name='parameters.json', dir='')
 ```
 
 ## Examples:
+
 **Binary Classification**
   - cat_classifier
   - pizza_classifier 
@@ -97,6 +100,7 @@ model.load(name='parameters.json', dir='')
 - Model summary
 
 ## Shorthand Notation
+
 Most (if not all) of the shorthand notation in the code is taken from Andrew Ng.
 - X - Inputs
 - Y - Labels

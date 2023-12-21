@@ -1,6 +1,7 @@
 import inspect
 import json
 from sandbox import utils
+from prettytable import PrettyTable
 
 # Handle conditional imports
 def configure_imports(cuda):
@@ -125,3 +126,17 @@ class Model:
         with open(dir + name, 'r') as file:
             jsonified_params = json.load(file)
         self.parameters = [{'W': np.array(layer['W']), 'b': np.array(layer['b'])} for layer in jsonified_params]
+
+    # Print model summary
+    def summary(self):
+        # Get number of parameters in each layer
+        num_params = [layer['W'].size + layer['b'].size for layer in self.parameters]
+
+        # Create table
+        table = PrettyTable(['Layer type', 'Parameters'])
+        for idx, layer in enumerate(self.layers):
+            table.add_row([type(layer).__name__, num_params[idx]])
+
+        # Print summary
+        print(table)
+        print("Total parameters:", sum(num_params))
