@@ -93,9 +93,7 @@ model.load(name='parameters.json', dir='')
 - Gradient checking
 - Momentum-based optimizers
 - Multiclass classification
-- Alternate parameter initialization methods
 - Mini-batch GD, SGD
-- Support for initializing model with layers
 - Model summary
 
 ## Shorthand Notation
