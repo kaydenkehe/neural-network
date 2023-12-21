@@ -52,6 +52,11 @@ model.save(name='parameters.json', dir='')
 model.load(name='parameters.json', dir='')
 ```
 
+Print model summary:
+```{python}
+model.summary()
+```
+
 ## Examples:
 
 **Binary Classification**
@@ -97,7 +102,6 @@ model.load(name='parameters.json', dir='')
 - Momentum-based optimizers
 - Multiclass classification
 - Mini-batch GD, SGD
-- Model summary
 
 ## Shorthand Notation
 
