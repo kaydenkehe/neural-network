@@ -3,15 +3,14 @@ def configure_imports(cuda):
     global np
     np = __import__('cupy' if cuda else 'numpy')
 
-# Gradient checking (assuring that all the calculus is correct)
-# TODO: Update to account for different arrangements of weights (e.g., for convolutional layers)
-# TODO: Vectorize, somehow(?)
+# Gradient checking
 def gradient_check(model, X, Y, epsilon=1e-4):
+
     # Calculate actual gradient
     AL = model.forward(X.T)
     grad = model.backward(AL, Y.T)
 
-    # Empty arrays for gradient and gradient approximation
+    # Declare empty arrays for gradient and gradient approximation
     num_params = model.summary(print_table=False)
     grad_arr, grad_aprox_arr = np.zeros(num_params), np.zeros(num_params)
 
@@ -43,7 +42,7 @@ def gradient_check(model, X, Y, epsilon=1e-4):
                 iter += 1
 
             # Return representation of distance between actual and approximate gradients
-            return np.linalg.norm(grad_arr - grad_aprox_arr) / np.linalg.norm(grad_arr + grad_aprox_arr)
+            return np.linalg.norm(grad_arr - grad_aprox_arr) / (np.linalg.norm(grad_arr) + np.linalg.norm(grad_aprox_arr))
 
 # 1 if output > 0.5, 0 otherwise
 def binary_round(Y):

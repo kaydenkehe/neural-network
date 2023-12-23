@@ -30,7 +30,8 @@ Configure the model:
 ```{python}
 model.configure(
     cost_type=costs.BinaryCrossentropy(),
-    initializer=initializers.Initializers.he
+    initializer=initializers.Initializers.he,
+    input_size=train_x.shape[1]
 )
 ```
 

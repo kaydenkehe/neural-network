@@ -27,19 +27,19 @@ class Model:
         self.layers.append(layer)
 
     # Configure model parameters
-    def configure(self, cost_type, initializer=initializers.Initializers.he):
+    def configure(self, cost_type, input_size, initializer=initializers.he):
         self.cost_type = cost_type
         self.initializer = initializer
+        self.initialize_parameters(input_size)
 
     # Train model
     def train(self, X, Y, learning_rate=0.01, epochs=1000, batch_size=None, verbose=False):
         m = X.shape[0]
         X, Y = X.T, Y.T # Transpose X and Y to match shape of weights and biases
-        self.initialize_parameters(input_size=X.shape[0]) # Initialize random parameters
         if not batch_size: batch_size = m # Default to batch GD
 
         # Loop through epochs
-        for i in range(epochs + 1):
+        for i in range(1, epochs + 1):
             # Shuffle data, split into batches
             X, Y = self.shuffle(X, Y)
             X_batches = np.array_split(X, m // batch_size, axis=1)
@@ -113,7 +113,7 @@ class Model:
                 self.parameters[layer]['b'] -= learning_rate * grad[layer]['db'] # Update biases for layer
                 self.parameters[layer]['W'] -= learning_rate * grad[layer]['dW'] # Update weights for layer
 
-    # Predict given input values and weights / biases
+    # Predict given input
     def predict(self, X):
         return self.forward(X.T, train=False).T
 
