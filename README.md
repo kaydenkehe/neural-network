@@ -1,6 +1,6 @@
 # Neural Network
 
-This repo contains a neural network built from scratch in Python. This project is more of a learning exercise for myself than anything else, and I intend on continuing to add features as I find time / motivation / when I get bored. `/src/sandbox` contains the source code, `/examples` contains (you guessed it) examples of model usage, and `/grad_check` contains gradient checking scripts to ensure the model is working correctly.
+This repo contains a neural network built from scratch in Python. This project is more of a learning exercise for myself than anything else, and I intend to continue adding features as I find time / motivation / when I get bored.<br>`/src/sandbox` contains the source code, `/examples` contains (you guessed it) examples of model usage, and `gradient_check.ipynb` contains gradient checking code to ensure the model is working correctly.
 
 ## Setup
 
