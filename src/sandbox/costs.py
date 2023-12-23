@@ -41,7 +41,7 @@ class MSE:
     
     # (-2 / m * (Y - A))
     def backward(self, AL, Y):
-        return -2 / Y.shape[1] * (Y - AL)
+        return -2 * (Y - AL)
 
 # Mean Absolute Error - Regression
 class MAE:
@@ -52,6 +52,6 @@ class MAE:
     def forward(self, AL, Y):
         return np.squeeze(1 / Y.shape[1] * np.sum(np.abs(Y - AL)))
     
-    # (-1 / m * sum(sign(Y - A)))
+    # -1 if AL < Y, 1 if AL > Y, 0 otherwise
     def backward(self, AL, Y):
-        return -1 / Y.shape[1] * np.sum(np.sign(Y - AL))
+        return np.where(AL < Y, -1, np.where(AL > Y, 1, 0))

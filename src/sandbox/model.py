@@ -1,6 +1,6 @@
 import inspect
 import json
-from sandbox import utils
+from sandbox import initializers
 from prettytable import PrettyTable
 
 # Handle conditional imports
@@ -27,27 +27,33 @@ class Model:
         self.layers.append(layer)
 
     # Configure model parameters
-    def configure(self, cost_type, learning_rate, epochs, initializer=utils.Initializers.he):
+    def configure(self, cost_type, initializer=initializers.Initializers.he):
         self.cost_type = cost_type
         self.initializer = initializer
-        self.learning_rate = learning_rate
-        self.epochs = epochs
 
     # Train model
-    def train(self, X, Y, verbose=False):
+    def train(self, X, Y, learning_rate=0.01, epochs=1000, batch_size=None, verbose=False):
+        m = X.shape[0]
         X, Y = X.T, Y.T # Transpose X and Y to match shape of weights and biases
         self.initialize_parameters(input_size=X.shape[0]) # Initialize random parameters
+        if not batch_size: batch_size = m # Default to batch GD
 
         # Loop through epochs
-        for i in range(self.epochs + 1):
-            X, Y = self.shuffle(X, Y) # Shuffle data
-            AL = self.forward_pass(X) # Forward propagate
-            cost = self.cost_type.forward(AL, Y) # Calculate cost
-            grads = self.backward_pass(AL, Y, self.cost_type) # Calculate gradient
-            self.update_parameters(grads, self.learning_rate) # Update weights and biases
-            self.costs.append(cost) # Update costs list
+        for i in range(epochs + 1):
+            # Shuffle data, split into batches
+            X, Y = self.shuffle(X, Y)
+            X_batches = np.array_split(X, m // batch_size, axis=1)
+            Y_batches = np.array_split(Y, m // batch_size, axis=1)
+
+            # Loop through batches
+            for X_batch, Y_batch in zip(X_batches, Y_batches):
+                AL = self.forward(X_batch) # Forward propagate
+                cost = self.cost_type.forward(AL, Y_batch) # Calculate cost
+                grad = self.backward(AL, Y_batch) # Calculate gradient
+                self.update_parameters(grad, learning_rate) # Update weights and biases
+                self.costs.append(cost) # Update costs list
             
-            if verbose and (i % 100 == 0 or i == self.epochs):
+            if verbose and (i % (epochs // 10) == 0 or i == epochs):
                 print(f"Cost on epoch {i}: {round(cost.item(), 5)}") # Optional, output progress
 
     # Initialize weights and biases
@@ -56,7 +62,7 @@ class Model:
         layer_sizes = [input_size] + [layer.units for layer in self.layers if layer.trainable]
         self.parameters = self.initializer(layer_sizes)
 
-        # For non-train layers, we want to set the parameters to empty arrays
+        # For non-trainable layers, we want to set the parameters to empty arrays
         for layer in range(len(self.layers)):
             if not self.layers[layer].trainable:
                 self.parameters.insert(layer, {'W': np.array([]), 'b': np.array([])})
@@ -68,7 +74,7 @@ class Model:
         return X[:, permutation], Y[:, permutation]
 
     # Forward propagate through model
-    def forward_pass(self, A, train=True):
+    def forward(self, A, train=True):
         self.caches = []
 
         # Exclude non-trainable layers (like dropout) when not training
@@ -88,29 +94,28 @@ class Model:
         return A
 
     # Find derivative with respect to each activation, weight, and bias
-    def backward_pass(self, AL, Y, cost):
-        grads = [None] * len(self.layers)
-        dA_prev = cost.backward(AL, Y.reshape(AL.shape)) # Find derivative of cost with respect to final activation
+    def backward(self, AL, Y):
+        grad = [None] * len(self.layers)
+        dA_prev = self.cost_type.backward(AL, Y.reshape(AL.shape)) # Find derivative of cost with respect to final activation
         
         # Find dA, dW, and db for all layers
         for layer in reversed(range(len(self.layers))):
             cache = self.caches[layer]
             dA_prev, dW, db = self.layers[layer].backward(dA_prev, **cache)
-            grads[layer] = {'dW': dW, 'db': db}
+            grad[layer] = {'dW': dW, 'db': db}
             
-        return grads
+        return grad
 
     # Update parameters using gradient
-    def update_parameters(self, grads, learning_rate):
+    def update_parameters(self, grad, learning_rate):
         for layer in range(len(self.layers)):
             if self.layers[layer].trainable:
-                self.parameters[layer]['b'] -= learning_rate * grads[layer]['db'] # Update biases for layer
-                self.parameters[layer]['W'] -= learning_rate * grads[layer]['dW'] # Update weights for layer
+                self.parameters[layer]['b'] -= learning_rate * grad[layer]['db'] # Update biases for layer
+                self.parameters[layer]['W'] -= learning_rate * grad[layer]['dW'] # Update weights for layer
 
     # Predict given input values and weights / biases
-    def predict(self, X, prediction_type=lambda x: x):
-        prediction = self.forward_pass(X.T, train=False).T # Model outputs
-        return prediction_type(prediction)
+    def predict(self, X):
+        return self.forward(X.T, train=False).T
 
     # Save parameters to JSON file
     def save(self, name='parameters.json', dir=''):
@@ -128,7 +133,7 @@ class Model:
         self.parameters = [{'W': np.array(layer['W']), 'b': np.array(layer['b'])} for layer in jsonified_params]
 
     # Print model summary
-    def summary(self):
+    def summary(self, print_table=True):
         # Get number of parameters in each layer
         num_params = [layer['W'].size + layer['b'].size for layer in self.parameters]
 
@@ -138,5 +143,8 @@ class Model:
             table.add_row([type(layer).__name__, num_params[idx]])
 
         # Print summary
-        print(table)
-        print("Total parameters:", sum(num_params))
+        if print_table:
+            print(table)
+            print("Total parameters:", sum(num_params))
+
+        return sum(num_params)

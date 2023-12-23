@@ -1,6 +1,6 @@
 # Neural Network
 
-This repo contains a neural network built from scratch in Python. This project is more of a learning exercise for myself than anything else, and I intend on continuing to add features as I find time / motivation / when I get bored.
+This repo contains a neural network built from scratch in Python. This project is more of a learning exercise for myself than anything else, and I intend on continuing to add features as I find time / motivation / when I get bored. `/src/sandbox` contains the source code, `/examples` contains (you guessed it) examples of model usage, and `/grad_check` contains gradient checking scripts to ensure the model is working correctly.
 
 ## Setup
 
@@ -10,7 +10,7 @@ Install the package: `python -m pip install -e <path to /src>`
 
 Import required packages:
 ```{python}
-from sandbox import model, layers, activations, costs, utils
+from sandbox import activations, costs, initializers, layers, model, utils
 ```
 
 Create the model:
@@ -29,21 +29,26 @@ model.add(layers.Dense(units=1, activation=activations.Sigmoid()))
 Configure the model:
 ```{python}
 model.configure(
-    learning_rate=0.0075,
-    epochs=2500,
     cost_type=costs.BinaryCrossentropy(),
-    initializer=utils.Initializers.he
+    initializer=initializers.Initializers.he
 )
 ```
 
 Train the model:
 ```{python}
-model.train(train_x, train_y, verbose=True)
+model.train(
+  train_x,
+  train_y,
+  learning_rate=0.01,
+  epochs=100,
+  batch_size=32
+  verbose=True
+)
 ```
 
 Predict with the model:
 ```{python}
-prediction = model.predict(image, prediction_type=utils.Predictions.binary_classification)
+prediction = model.predict(image)
 ```
 
 Save / load model parameters:
@@ -56,6 +61,12 @@ Print model summary:
 ```{python}
 model.summary()
 ```
+
+## Utilities
+
+Helper functions found in `\src\sandbox\utils.py`:
+- `gradient_check(model, X, Y, epsilon=1e-4)` - Assess the correctness of the gradient calculation. Returns normalized Euclidean distance between the actual and approximated gradient.
+- `binary_round(Y)` - Rounds binary classification output to 0 or 1.
 
 ## Examples:
 
@@ -74,8 +85,6 @@ model.summary()
 - Sigmoid
 - ReLU
 - Tanh
-- Heaviside
-- Signum
 - ELU (Exponential Linear Units)
 - SELU (Scaled Exponential Linear Units)
 - SLU (Sigmoid Linear Units)
@@ -85,7 +94,6 @@ model.summary()
 - Gaussian
 - Arctan
 - PiecewiseLinear
-- DoubleExponential
 
 **Cost Functions**
 - BinaryCrossentropy
@@ -98,10 +106,8 @@ model.summary()
 
 ## (Hopefully) Upcoming Features
 
-- Gradient checking
 - Momentum-based optimizers
 - Multiclass classification
-- Mini-batch GD, SGD
 
 ## Shorthand Notation
 
@@ -113,10 +119,11 @@ Most (if not all) of the shorthand notation in the code is taken from Andrew Ng.
 - Z - Pre-activation neuron values
 - W, b - Weight matrix, bias vector
 - d<W, b, A, AL> - Derivative of value with respect to cost
+- m - Number of training samples
 
 ## Notes
 
-- The first hidden layer here is considered to be layer zero, as opposed to the convention used by Andrew Ng, where the input layer is layer zero.
+- The first hidden layer here is layer zero, as opposed to the convention used by Andrew Ng, where the input layer is layer zero.
 - This documentation is mostly for myself - There's no reason to use this code over something like TensorFlow, Jax, or PyTorch.
 - This project was originally based on the notation and content taught by Andrew Ng in his Deep Learning Specialization course, but it will be transitioning to follow the conventions from in Ovidiu Calin's Deep Learning Architectures book (ISBN 978-3-030-36723-7, https://www.amazon.com/Deep-Learning-Architectures-Mathematical-Approach/dp/3030367207/) if I ever get back around to working on it.
 -  The structure of the project is heavily inspired by TensorFlow, as you can see in the example usage.

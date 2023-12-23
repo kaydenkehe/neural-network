@@ -3,61 +3,48 @@ def configure_imports(cuda):
     global np
     np = __import__('cupy' if cuda else 'numpy')
 
-# Prediction format helper
-class Predictions:
+# Gradient checking (assuring that all the calculus is correct)
+# TODO: Update to account for different arrangements of weights (e.g., for convolutional layers)
+# TODO: Vectorize, somehow(?)
+def gradient_check(model, X, Y, epsilon=1e-4):
+    # Calculate actual gradient
+    AL = model.forward(X.T)
+    grad = model.backward(AL, Y.T)
 
-    # 1 if output > 0.5, 0 otherwise
-    def binary_classification(Y):
-        return np.where(Y > 0.5, 1, 0)
+    # Empty arrays for gradient and gradient approximation
+    num_params = model.summary(print_table=False)
+    grad_arr, grad_aprox_arr = np.zeros(num_params), np.zeros(num_params)
 
-# Parameter initializers
-class Initializers:
+    # Loop through every parameter
+    iter = 0
+    for layer in range(len(model.layers)):
+        for param_type in ['W', 'b']:
+            for param in range(model.parameters[layer][param_type].shape[0]):
 
-    # Initialize weights and biases to zeros
-    # Bad - leads to symmetry, many neurons learn same features
-    def zeros(layer_sizes):
-        return [{
-            'W': np.zeros((layer_sizes[layer + 1], layer_sizes[layer])), # Zeros for weights
-            'b': np.zeros((layer_sizes[layer + 1], 1)) # Zeros for biases
-        } for layer in range(len(layer_sizes) - 1)]
+                # Calculate the cost with the parameter shifted by +epsilon
+                model.parameters[layer][param_type][param][0] += epsilon
+                AL_pe = model.forward(X.T)
+                cost_pe = model.cost_type.forward(AL_pe, Y.T)
 
-    # Initialize weights and biases to ones
-    def ones(layer_sizes):
-        return [{
-            'W': np.ones((layer_sizes[layer + 1], layer_sizes[layer])), # Ones for weights
-            'b': np.ones((layer_sizes[layer + 1], 1)) # Ones for biases
-        } for layer in range(len(layer_sizes) - 1)]
+                # Calculate the cost with the parameter shifted by -epsilon
+                model.parameters[layer][param_type][param][0] -= 2 * epsilon
+                AL_ne = model.forward(X.T)
+                cost_ne = model.cost_type.forward(AL_ne, Y.T)
 
-    # Initialize weights and biases to normal random values
-    def normal(layer_sizes):
-        return [{
-            'W': np.random.randn(layer_sizes[layer + 1], layer_sizes[layer]),
-            'b': np.random.randn(layer_sizes[layer + 1], 1)
-        } for layer in range(len(layer_sizes) - 1)]
+                # Reset the parameter
+                model.parameters[layer][param_type][param][0] += epsilon
 
-    # Initialize weights and biases to uniform random values
-    def uniform(layer_sizes, min=-1, max=1):
-        return [{
-            'W': np.random.uniform(min, max, (layer_sizes[layer + 1], layer_sizes[layer])),
-            'b': np.random.uniform(min, max, (layer_sizes[layer + 1], 1))
-        } for layer in range(len(layer_sizes) - 1)]
+                # Calculate the approximate parameter derivative w.r.t. cost
+                grad_aprox_arr[iter] = (cost_pe - cost_ne) / (2 * epsilon)
 
-    # The gist of the Xavier and He initializer functions are from Andrew Ng's course,
-    # but these seem to be at odds with some other things I've read online,
-    # so I may update them at a later date.
+                # Append actual gradient value to list (allows for Euclidean distance in later step)
+                grad_arr[iter] = (grad[layer]['d' + param_type][param][0])
 
-    # Initialize weights and biases using Xavier (a.k.a. Glorot) initialization
-    # Good for Sigmoid, Tanh
-    def xavier(layer_sizes):
-        return [{
-            'W': np.random.randn(layer_sizes[layer + 1], layer_sizes[layer]) / np.sqrt(layer_sizes[layer]),
-            'b': np.zeros((layer_sizes[layer + 1], 1))
-        } for layer in range(len(layer_sizes) - 1)]
+                iter += 1
 
-    # Initialize weights and biases using He initialization
-    # Good for ReLU
-    def he(layer_sizes):
-        return [{
-            'W': np.random.randn(layer_sizes[layer + 1], layer_sizes[layer]) * np.sqrt(2 / layer_sizes[layer]),
-            'b': np.zeros((layer_sizes[layer + 1], 1))
-        } for layer in range(len(layer_sizes) - 1)]
+            # Return representation of distance between actual and approximate gradients
+            return np.linalg.norm(grad_arr - grad_aprox_arr) / np.linalg.norm(grad_arr + grad_aprox_arr)
+
+# 1 if output > 0.5, 0 otherwise
+def binary_round(Y):
+    return np.where(Y > 0.5, 1, 0)

@@ -68,32 +68,6 @@ class Tanh():
     def backward(self, Z):
         return 1 - self.forward(Z) ** 2
 
-class Heaviside():
-
-    def __init__(self):
-        pass
-
-    # 0 if z < 0, 1 if z >= 0
-    def forward(self, Z):
-        return np.where(Z < 0, 0, 1)
-    
-    # 0
-    def backward(self, Z):
-        return 0
-
-class Signum():
-
-    def __init__(self):
-        pass
-
-    # -1 if z < 0, 0 if z = 0, 1 if z > 0
-    def forward(self, Z):
-        return np.where(Z < 0, -1, np.where(Z == 0, 0, 1))
-    
-    # 0
-    def backward(self, Z):
-        return 0
-
 class ELU(): # Exponential Linear Units
 
     def __init__(self, alpha=1):
@@ -212,16 +186,3 @@ class PiecewiseLinear():
     # 0 if x <= -alpha, 1 / alpha if -alpha < x < alpha, 0 if x >= alpha
     def backward(self, Z):
         return np.where(Z <= -self.alpha, 0, np.where(Z >= self.alpha, 0, 1 / self.alpha))
-    
-class DoubleExponential():
-    
-    def __init__(self, lambda_=1):
-        self.lambda_ = lambda_
-
-    # e^(-lambda * |x|)
-    def forward(self, Z):
-        return np.exp(-self.lambda_ * np.abs(Z))
-    
-    # -c * e^(-lambda * |x|)
-    def backward(self, Z):
-        return -self.lambda_ * np.exp(-self.lambda_ * np.abs(Z))
