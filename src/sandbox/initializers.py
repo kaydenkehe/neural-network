@@ -33,6 +33,13 @@ def uniform(layer_sizes):
         'b': np.random.uniform(-1, 1, (layer_sizes[layer + 1], 1))
     } for layer in range(len(layer_sizes) - 1)]
 
+# Initialize weights and biases using Glorot normal initialization ()
+def glorot_normal(layer_sizes):
+    return [{
+        'W': np.random.randn(layer_sizes[layer + 1], layer_sizes[layer]) * np.sqrt(2 / (layer_sizes[layer] + layer_sizes[layer + 1])),
+        'b': np.zeros((layer_sizes[layer + 1], 1))
+    } for layer in range(len(layer_sizes) - 1)]
+
 # The gist of the Xavier and He initializer functions are from Andrew Ng's course,
 # but these seem to be at odds with some other things I've read online,
 # so I may update them at a later date.
