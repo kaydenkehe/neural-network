@@ -47,3 +47,8 @@ def gradient_check(model, X, Y, epsilon=1e-4):
 # 1 if output > 0.5, 0 otherwise
 def binary_round(Y):
     return np.where(Y > 0.5, 1, 0)
+
+# Calculate accuracy (for binary classification)
+def binary_evaluate(Y_hat, Y, round=True):
+    if round: Y_hat = binary_round(Y_hat)
+    return np.mean(np.where(Y_hat == Y, 1, 0))

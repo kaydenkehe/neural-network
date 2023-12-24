@@ -27,7 +27,7 @@ class Model:
         self.layers.append(layer)
 
     # Configure model settings
-    def configure(self, cost_type, input_size, optimizer=optimizers.SGD(), initializer=initializers.he):
+    def configure(self, cost_type, input_size, optimizer=optimizers.SGD(), initializer=initializers.glorot_normal):
         self.cost_type = cost_type
         self.initializer = initializer
         self.optimizer = optimizer

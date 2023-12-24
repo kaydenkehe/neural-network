@@ -111,9 +111,10 @@ Helper functions found in `\src\sandbox\utils.py`:
 - RMSProp
 - Adam
 
-## (Hopefully) Upcoming Features
+## (Hopefully) Upcoming Features / Changes
 
 - Multiclass classification
+- Initialize parameters by layer instead of all at once
 
 ## Shorthand Notation
 
