@@ -3,6 +3,13 @@ def configure_imports(cuda):
     global np
     np = __import__('cupy' if cuda else 'numpy')
 
+'''
+Every optimizer class includes three methods:
+    - __init__: Initialize optimizer parameters
+    - configure: Add necessary additional parameters to existing model parameters (e.g. velocities, learning rate scalers)
+    - update: Update model parameters
+'''
+
 # SGD optimizer (default)
 class SGD:
 
@@ -64,8 +71,8 @@ class RMSProp:
     def update(self, parameters, layers, grad):
         for layer in range(len(layers)):
                 if layers[layer].trainable:
-                    parameters[layer]['SdW'] = self.beta * parameters[layer]['SdW'] + (1 - self.beta) * np.square(grad[layer]['dW']) # Update weight velocities
-                    parameters[layer]['Sdb'] = self.beta * parameters[layer]['Sdb'] + (1 - self.beta) * np.square(grad[layer]['db']) # Update bias velocities
+                    parameters[layer]['SdW'] = self.beta * parameters[layer]['SdW'] + (1 - self.beta) * np.square(grad[layer]['dW']) # Update weight LR scalers
+                    parameters[layer]['Sdb'] = self.beta * parameters[layer]['Sdb'] + (1 - self.beta) * np.square(grad[layer]['db']) # Update bias LR scalers
                     parameters[layer]['W'] -= self.learning_rate * grad[layer]['dW'] / (np.sqrt(parameters[layer]['SdW']) + self.epsilon) # Update weights
                     parameters[layer]['b'] -= self.learning_rate * grad[layer]['db'] / (np.sqrt(parameters[layer]['Sdb']) + self.epsilon) # Update biases
 
@@ -95,8 +102,8 @@ class Adam:
                     if layers[layer].trainable:
                         parameters[layer]['VdW'] = self.beta1 * parameters[layer]['VdW'] + (1 - self.beta1) * grad[layer]['dW'] # Update weight velocities
                         parameters[layer]['Vdb'] = self.beta1 * parameters[layer]['Vdb'] + (1 - self.beta1) * grad[layer]['db'] # Update bias velocities
-                        parameters[layer]['SdW'] = self.beta2 * parameters[layer]['SdW'] + (1 - self.beta2) * np.square(grad[layer]['dW']) # Update weight velocities
-                        parameters[layer]['Sdb'] = self.beta2 * parameters[layer]['Sdb'] + (1 - self.beta2) * np.square(grad[layer]['db']) # Update bias velocities
+                        parameters[layer]['SdW'] = self.beta2 * parameters[layer]['SdW'] + (1 - self.beta2) * np.square(grad[layer]['dW']) # Update weight LR scalers
+                        parameters[layer]['Sdb'] = self.beta2 * parameters[layer]['Sdb'] + (1 - self.beta2) * np.square(grad[layer]['db']) # Update bias LR scalers
                         parameters[layer]['W'] -= self.learning_rate * parameters[layer]['VdW'] / (np.sqrt(parameters[layer]['SdW']) + self.epsilon) # Update weights
                         parameters[layer]['b'] -= self.learning_rate * parameters[layer]['Vdb'] / (np.sqrt(parameters[layer]['Sdb']) + self.epsilon) # Update biases
     

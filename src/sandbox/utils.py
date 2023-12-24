@@ -49,6 +49,5 @@ def binary_round(Y):
     return np.where(Y > 0.5, 1, 0)
 
 # Calculate accuracy (for binary classification)
-def binary_evaluate(Y_hat, Y, round=True):
-    if round: Y_hat = binary_round(Y_hat)
-    return np.mean(np.where(Y_hat == Y, 1, 0))
+def binary_evaluate(Y_pred, Y):
+    return np.mean(np.where(binary_round(Y_pred) == Y, 1, 0))

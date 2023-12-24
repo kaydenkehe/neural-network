@@ -1,14 +1,24 @@
+from sandbox import initializers
+
 # Handle conditional imports
 def configure_imports(cuda):
     global np
     np = __import__('cupy' if cuda else 'numpy')
 
+'''
+Every layer class includes three methods:
+    - __init__: Initialize layer parameters
+    - forward: Compute neuron activation
+    - backward: Compute derivative of weights, biases, and activations
+'''
+
 # Dense / fully connected layer
 class Dense():
-    def __init__(self, units, activation):
+    def __init__(self, units, activation, initializer=initializers.glorot_uniform):
         self.trainable = True
         self.units = units
         self.activation = activation
+        self.initializer = initializer
 
     # Calculate layer neuron activations phi(W^T * A + b)
     def forward(self, A_prev, W, b):

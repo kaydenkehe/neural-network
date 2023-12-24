@@ -40,7 +40,7 @@ Train the model:
 model.train(
   train_x,
   train_y,
-  learning_rate=0.01,
+  learning_rate=0.001,
   epochs=100,
   batch_size=32
   verbose=True
@@ -68,6 +68,7 @@ model.summary()
 Helper functions found in `\src\sandbox\utils.py`:
 - `gradient_check(model, X, Y, epsilon=1e-4)` - Assess the correctness of the gradient calculation. Returns normalized Euclidean distance between the actual and approximated gradient.
 - `binary_round(Y)` - Rounds binary classification output to 0 or 1.
+- `binary_evaluate(Y_pred, Y)` - Given labels and predictions, return proportion of correct predictions.
 
 ## Examples:
 
@@ -114,7 +115,9 @@ Helper functions found in `\src\sandbox\utils.py`:
 ## (Hopefully) Upcoming Features / Changes
 
 - Multiclass classification
-- Initialize parameters by layer instead of all at once
+- AdaGrad Optimizer
+- Ability to change initializer by layer
+- Early stop loss conditions
 
 ## Shorthand Notation
 

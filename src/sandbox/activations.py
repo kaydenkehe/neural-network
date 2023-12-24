@@ -3,6 +3,13 @@ def configure_imports(cuda):
     global np
     np = __import__('cupy' if cuda else 'numpy')
 
+'''
+Every activation class includes three methods:
+    - __init__: Initialize activation parameters (if applicable)
+    - forward: Compute neuron activation
+    - backward: Compute derivative of activation
+'''
+
 class Linear:
 
     def __init__(self, k=1):

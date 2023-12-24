@@ -5,56 +5,60 @@ def configure_imports(cuda):
 
 # Initialize parameters as zeros
 # Bad - leads to symmetry, many neurons learn same features
-def zeros(layer_sizes):
-    return [{
-        'W': np.zeros((layer_sizes[layer + 1], layer_sizes[layer])), # Zeros for weights
-        'b': np.zeros((layer_sizes[layer + 1], 1)) # Zeros for biases
-    } for layer in range(len(layer_sizes) - 1)]
+def zeros(prev_layer_size, layer_size):
+    return {
+        'W': np.zeros((layer_size, prev_layer_size)), # Zeros for weights
+        'b': np.zeros((layer_size, 1)) # Zeros for biases
+    }
 
 # Initialize parameters as ones
 # Bad - leads to symmetry, many neurons learn same features
-def ones(layer_sizes):
-    return [{
-        'W': np.ones((layer_sizes[layer + 1], layer_sizes[layer])), # Ones for weights
-        'b': np.ones((layer_sizes[layer + 1], 1)) # Ones for biases
-    } for layer in range(len(layer_sizes) - 1)]
+def ones(prev_layer_size, layer_size):
+    return {
+        'W': np.ones((layer_size, prev_layer_size)), # Ones for weights
+        'b': np.ones((layer_size, 1)) # Ones for biases
+    }
 
-# Initialize parameters to normal random values
-def normal(layer_sizes):
-    return [{
-        'W': np.random.randn(layer_sizes[layer + 1], layer_sizes[layer]),
-        'b': np.random.randn(layer_sizes[layer + 1], 1)
-    } for layer in range(len(layer_sizes) - 1)]
+# Initialize parameters following normal random distribution
+def normal(prev_layer_size, layer_size):
+    return {
+        'W': np.random.randn(layer_size, prev_layer_size), # Random normal for weights
+        'b': np.zeros((layer_size, 1)) # Zeros for biases
+    }
 
-# Initialize parameters to uniform random values
-def uniform(layer_sizes):
-    return [{
-        'W': np.random.uniform(-1, 1, (layer_sizes[layer + 1], layer_sizes[layer])),
-        'b': np.random.uniform(-1, 1, (layer_sizes[layer + 1], 1))
-    } for layer in range(len(layer_sizes) - 1)]
+# Initialize parameters following uniform random distribution
+def uniform(prev_layer_size, layer_size):
+    return {
+        'W': np.random.uniform(-1, 1, (layer_size, prev_layer_size)), # Random uniform for weights
+        'b': np.zeros((layer_size, 1)) # Zeros for biases
+    }
 
-# Initialize parameters using Glorot (Xavier) normal initialization
-def glorot_normal(layer_sizes):
-    return [{
-        'W': np.random.randn(layer_sizes[layer + 1], layer_sizes[layer]) * np.sqrt(2 / (layer_sizes[layer] + layer_sizes[layer + 1])),
-        'b': np.zeros((layer_sizes[layer + 1], 1))
-    } for layer in range(len(layer_sizes) - 1)]
+# Initialize parameters following Glorot / Xavier normal distribution
+def glorot_normal(prev_layer_size, layer_size):
+    return {
+        'W': np.random.randn(layer_size, prev_layer_size) * np.sqrt(2 / (layer_size + prev_layer_size)), # Glorot normal for weights
+        'b': np.zeros((layer_size, 1)) # Zeros for biases
+    }
 
-# Glorot / Xavier uniform initialization
-def glorot_uniform(layer_sizes):
-    return [{
-        'W': np.random.uniform(-1, 1, (layer_sizes[layer + 1], layer_sizes[layer])) * np.sqrt(2 / (layer_sizes[layer] + layer_sizes[layer + 1])),
-        'b': np.zeros((layer_sizes[layer + 1], 1))
-    } for layer in range(len(layer_sizes) - 1)]
+# Initialize parameters following Glorot / Xavier uniform distribution
+def glorot_uniform(prev_layer_size, layer_size):
+    limit = np.sqrt(6 / (layer_size + prev_layer_size))
+    return {
+        'W': np.random.uniform(-limit, limit, (layer_size, prev_layer_size)), # Glorot uniform for weights
+        'b': np.zeros((layer_size, 1)) # Zeros for biases
+    }
 
-def he_normal(layer_sizes):
-    return [{
-        'W': np.random.randn(layer_sizes[layer + 1], layer_sizes[layer]) * np.sqrt(2 / layer_sizes[layer]),
-        'b': np.zeros((layer_sizes[layer + 1], 1))
-    } for layer in range(len(layer_sizes) - 1)]
+# Initialize parameters following He normal distribution
+def he_normal(prev_layer_size, layer_size):
+    return {
+        'W': np.random.randn(layer_size, prev_layer_size) * np.sqrt(2 / prev_layer_size), # He normal for weights
+        'b': np.zeros((layer_size, 1)) # Zeros for biases
+    }
 
-def he_uniform(layer_sizes):
-    return [{
-        'W': np.random.uniform(-1, 1, (layer_sizes[layer + 1], layer_sizes[layer])) * np.sqrt(2 / layer_sizes[layer]),
-        'b': np.zeros((layer_sizes[layer + 1], 1))
-    } for layer in range(len(layer_sizes) - 1)]
+# Initialize parameters following He uniform distribution
+def he_uniform(prev_layer_size, layer_size):
+    limit = np.sqrt(6 / prev_layer_size)
+    return {
+        'W': np.random.uniform(-limit, limit, (layer_size, prev_layer_size)), # He uniform for weights
+        'b': np.zeros((layer_size, 1)) # Zeros for biases
+    }

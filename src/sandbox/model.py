@@ -15,7 +15,7 @@ class Model:
         self.layers = [] # Each item is a layer object
         self.parameters = [] # Each item is a dictionary with a 'W' and 'b' matrix for the weights and biases respectively
         self.caches = [] # Each item is a dictionary with the 'A_prev', 'W', 'b', and 'Z' values for the layer - Used in backprop
-        self.costs = [] # Each item is the cost for the epoch
+        self.costs = [] # Each item is the cost for an epoch
 
         # Configure all scripts to run on either CuPy or NumPy
         import sandbox
@@ -27,18 +27,19 @@ class Model:
         self.layers.append(layer)
 
     # Configure model settings
-    def configure(self, cost_type, input_size, optimizer=optimizers.SGD(), initializer=initializers.glorot_normal):
+    def configure(self, cost_type, input_size, optimizer=optimizers.SGD(), initializer=initializers.glorot_uniform):
         self.cost_type = cost_type
         self.initializer = initializer
         self.optimizer = optimizer
 
         self.initialize_parameters(input_size) # Initialize parameters
-        self.parameters = self.optimizer.configure(self.parameters, self.layers) # Add optimizer velocities, etc.
+        self.parameters = self.optimizer.configure(self.parameters, self.layers) # Add velocities, etc. to parameters
 
     # Train model
-    def train(self, X, Y, learning_rate=0.001, epochs=1000, batch_size=None, verbose=False):
-        self.optimizer.learning_rate = learning_rate
-        m = X.shape[0]
+    def train(self, X, Y, epochs, learning_rate=0.001, batch_size=None, verbose=False):
+        num_prints = 10 if epochs >= 10 else epochs # Print progress 10 times, if possible
+        self.optimizer.learning_rate = learning_rate # Set learning rate
+        m = X.shape[0] # Number of training samples
         X, Y = X.T, Y.T # Transpose X and Y to match shape of weights and biases
         if not batch_size: batch_size = m # Default to batch GD
 
@@ -57,23 +58,28 @@ class Model:
                 self.parameters = self.optimizer.update(self.parameters, self.layers, grad) # Update weights and biases
 
                 self.costs.append(cost) # Update costs list
-            if verbose and (i % (epochs // 10) == 0 or i == epochs):
+            if verbose and (i % (epochs // num_prints) == 0 or i == epochs):
                 print(f"Cost on epoch {i}: {round(cost.item(), 5)}") # Optional, output progress
 
     # Initialize weights and biases
     def initialize_parameters(self, input_size):
-        # Initialize parameters using initializer function
+        # Initialize parameters using initializer functions
         layer_sizes = [input_size] + [layer.units for layer in self.layers if layer.trainable]
-        self.parameters = self.initializer(layer_sizes)
+        self.parameters = [
+            self.layers[layer].initializer(
+                layer_sizes[layer],
+                layer_sizes[layer + 1]
+            )
+            for layer in range(len(layer_sizes) - 1)
+        ]
 
-        # For non-trainable layers, we want to set the parameters to empty arrays
+        # For non-trainable layers, set parameters to empty arrays
         for layer in range(len(self.layers)):
             if not self.layers[layer].trainable:
                 self.parameters.insert(layer, {'W': np.array([]), 'b': np.array([])})
 
     # Shuffle data
     def shuffle(self, X, Y):
-        assert X.shape[1] == Y.shape[1]
         permutation = np.random.permutation(X.shape[1])
         return X[:, permutation], Y[:, permutation]
 

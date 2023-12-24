@@ -3,10 +3,14 @@ def configure_imports(cuda):
     global np
     np = __import__('cupy' if cuda else 'numpy')
 
+'''
+Every cost class includes three methods:
+    - forward: Compute cost
+    - backward: Compute derivative of cost
+'''
+
 # Binary Cross Entropy - Binary classification
 class BinaryCrossentropy:
-    def __init__(self):
-        pass
 
     # (-1 / m * sum(Yln(A) + (1 - Y)ln(1 - A)))
     def forward(self, AL, Y):
@@ -19,8 +23,6 @@ class BinaryCrossentropy:
 # Categorical Cross Entropy - Multiclass classification
 # TODO: Implement
 class CategoricalCrossentropy:
-    def __init__(self):
-        pass
 
     # TBA 
     def forward(self, AL, Y):
@@ -32,8 +34,6 @@ class CategoricalCrossentropy:
 
 # Mean Squared Error - Regression
 class MSE:
-    def __init__(self):
-        pass
 
     # (1 / m * sum((Y - A)^2))
     def forward(self, AL, Y):
@@ -45,8 +45,6 @@ class MSE:
 
 # Mean Absolute Error - Regression
 class MAE:
-    def __init__(self):
-        pass
 
     # (1 / m * sum(|Y - A|))
     def forward(self, AL, Y):
