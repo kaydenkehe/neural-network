@@ -105,9 +105,14 @@ Helper functions found in `\src\sandbox\utils.py`:
 - Dense
 - Dropout
 
+**Optimizers**
+- SGD
+- Momentum
+- RMSProp
+- Adam
+
 ## (Hopefully) Upcoming Features
 
-- Momentum-based optimizers
 - Multiclass classification
 
 ## Shorthand Notation

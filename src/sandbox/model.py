@@ -1,6 +1,6 @@
 import inspect
 import json
-from sandbox import initializers
+from sandbox import initializers, optimizers
 from prettytable import PrettyTable
 
 # Handle conditional imports
@@ -26,14 +26,18 @@ class Model:
     def add(self, layer):
         self.layers.append(layer)
 
-    # Configure model parameters
-    def configure(self, cost_type, input_size, initializer=initializers.he):
+    # Configure model settings
+    def configure(self, cost_type, input_size, optimizer=optimizers.SGD(), initializer=initializers.he):
         self.cost_type = cost_type
         self.initializer = initializer
-        self.initialize_parameters(input_size)
+        self.optimizer = optimizer
+
+        self.initialize_parameters(input_size) # Initialize parameters
+        self.parameters = self.optimizer.configure(self.parameters, self.layers) # Add optimizer velocities, etc.
 
     # Train model
-    def train(self, X, Y, learning_rate=0.01, epochs=1000, batch_size=None, verbose=False):
+    def train(self, X, Y, learning_rate=0.001, epochs=1000, batch_size=None, verbose=False):
+        self.optimizer.learning_rate = learning_rate
         m = X.shape[0]
         X, Y = X.T, Y.T # Transpose X and Y to match shape of weights and biases
         if not batch_size: batch_size = m # Default to batch GD
@@ -50,9 +54,9 @@ class Model:
                 AL = self.forward(X_batch) # Forward propagate
                 cost = self.cost_type.forward(AL, Y_batch) # Calculate cost
                 grad = self.backward(AL, Y_batch) # Calculate gradient
-                self.update_parameters(grad, learning_rate) # Update weights and biases
+                self.parameters = self.optimizer.update(self.parameters, self.layers, grad) # Update weights and biases
+
                 self.costs.append(cost) # Update costs list
-            
             if verbose and (i % (epochs // 10) == 0 or i == epochs):
                 print(f"Cost on epoch {i}: {round(cost.item(), 5)}") # Optional, output progress
 
@@ -83,7 +87,7 @@ class Model:
         # Loop through hidden layers, calculating activations
         for layer in layers:
             A_prev = A
-            A, Z = self.layers[layer].forward(A_prev, **self.parameters[layer])
+            A, Z = self.layers[layer].forward(A_prev, self.parameters[layer]['W'], self.parameters[layer]['b'])
             self.caches.append({
                 'A_prev': A_prev,
                 "W": self.parameters[layer]['W'],
@@ -105,13 +109,6 @@ class Model:
             grad[layer] = {'dW': dW, 'db': db}
             
         return grad
-
-    # Update parameters using gradient
-    def update_parameters(self, grad, learning_rate):
-        for layer in range(len(self.layers)):
-            if self.layers[layer].trainable:
-                self.parameters[layer]['b'] -= learning_rate * grad[layer]['db'] # Update biases for layer
-                self.parameters[layer]['W'] -= learning_rate * grad[layer]['dW'] # Update weights for layer
 
     # Predict given input
     def predict(self, X):
