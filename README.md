@@ -116,8 +116,6 @@ Helper functions found in `\src\sandbox\utils.py`:
 
 - Multiclass classification
 - AdaGrad Optimizer
-- Ability to change initializer by layer
-- Early stop loss conditions
 
 ## Shorthand Notation
 
