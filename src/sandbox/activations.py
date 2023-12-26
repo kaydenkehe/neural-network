@@ -7,9 +7,10 @@ def configure_imports(cuda):
 Every activation class includes three methods:
     - __init__: Initialize activation parameters (if applicable)
     - forward: Compute neuron activation
-    - backward: Compute derivative of activation
+    - backward: Compute derivative of activation w.r.t. un-activated neuron value (Z)
 '''
 
+# Used in regression output layers
 class Linear:
 
     def __init__(self, k=1):
@@ -22,6 +23,8 @@ class Linear:
     def backward(self, Z):
         return self.k
 
+# Maps output to [0, 1] (probability)
+# Used in binary classification output layers
 class Sigmoid:
 
     def __init__(self, c=1):
@@ -36,7 +39,9 @@ class Sigmoid:
         s = self.forward(Z)
         return self.c * s * (1 - s)
 
-class ReLU(): # Rectified Linear Units
+# Rectified Linear Units
+# Most common hidden layer activation
+class ReLU():
 
     def __init__(self):
         pass
@@ -49,6 +54,7 @@ class ReLU(): # Rectified Linear Units
     def backward(self, Z):
         return np.where(Z <= 0, 0, 1)
 
+# Offshoot of ReLU, attempts to combat vanishing gradient
 class LeakyReLU():
 
     def __init__(self, alpha=0.01):
@@ -75,7 +81,8 @@ class Tanh():
     def backward(self, Z):
         return 1 - self.forward(Z) ** 2
 
-class ELU(): # Exponential Linear Units
+# Exponential Linear Units
+class ELU():
 
     def __init__(self, alpha=1):
         self.alpha = alpha
@@ -88,7 +95,8 @@ class ELU(): # Exponential Linear Units
     def backward(self, Z):
         return np.where(Z < 0, self.alpha * np.exp(Z), 1)
     
-class SELU(): # Scaled Exponential Linear Units
+# Scaled Exponential Linear Units
+class SELU():
 
     def __init__(self, alpha=1, scale=1):
         self.alpha = alpha
@@ -102,7 +110,8 @@ class SELU(): # Scaled Exponential Linear Units
     def backward(self, Z):
         return self.scale * np.where(Z < 0, self.alpha * np.exp(Z), 1)
 
-class SLU(): # Sigmoid Linear Units
+# Sigmoid Linear Units
+class SLU():
 
     def __init__(self):
         pass

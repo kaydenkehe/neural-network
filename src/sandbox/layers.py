@@ -9,10 +9,15 @@ def configure_imports(cuda):
 Every layer class includes three methods:
     - __init__: Initialize layer parameters
     - forward: Compute neuron activation
-    - backward: Compute derivative of weights, biases, and activations
+    - backward: Compute derivative of cost w.r.t. weights, biases, and activations
 '''
 
-# Dense / fully connected layer
+'''
+Dense / fully connected layer
+
+The dense layer is the most basic layer in a neural network
+Every neuron in a dense layer is connected to every neuron in the layer preceding it
+'''
 class Dense():
     def __init__(self, units, activation, initializer=initializers.glorot_uniform):
         self.trainable = True
@@ -37,7 +42,12 @@ class Dense():
 
         return dA_prev, dW, db
 
-# Dropout layer
+'''
+Dropout layer
+
+Combats overfitting by randomly setting activations to 0
+Helps prevent co-adaptation of neurons
+'''
 class Dropout():
     def __init__(self, rate):
         self.trainable = False

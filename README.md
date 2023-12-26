@@ -116,6 +116,7 @@ Helper functions found in `\src\sandbox\utils.py`:
 ## (Hopefully) Upcoming Features / Changes
 
 - Multiclass classification
+- 2D convolutional layers
 
 ## Shorthand Notation
 
