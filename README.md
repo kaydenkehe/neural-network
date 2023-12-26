@@ -111,11 +111,11 @@ Helper functions found in `\src\sandbox\utils.py`:
 - Momentum
 - RMSProp
 - Adam
+- AdaGrad
 
 ## (Hopefully) Upcoming Features / Changes
 
 - Multiclass classification
-- AdaGrad Optimizer
 
 ## Shorthand Notation
 
