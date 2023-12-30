@@ -40,24 +40,24 @@ class Model:
         num_prints = 10 if epochs >= 10 else epochs # Print progress 10 times, if possible
         self.optimizer.learning_rate = learning_rate # Set learning rate
         m = X.shape[0] # Number of training samples
-        X, Y = X.T, Y.T # Transpose X and Y to match shape of weights and biases
         if not batch_size: batch_size = m # Default to batch GD
 
         # Loop through epochs
         for i in range(1, epochs + 1):
             # Shuffle data, split into batches
             X, Y = self.shuffle(X, Y)
-            X_batches = np.array_split(X, m // batch_size, axis=1)
-            Y_batches = np.array_split(Y, m // batch_size, axis=1)
+            X_batches = np.array_split(X, m // batch_size, axis=0)
+            Y_batches = np.array_split(Y, m // batch_size, axis=0)
 
             # Loop through batches
             for X_batch, Y_batch in zip(X_batches, Y_batches):
                 AL = self.forward(X_batch) # Forward propagate
+                # print(AL)
                 cost = self.cost_type.forward(AL, Y_batch) # Calculate cost
                 grad = self.backward(AL, Y_batch) # Calculate gradient
                 self.parameters = self.optimizer.update(self.parameters, self.layers, grad) # Update weights and biases
-
                 self.costs.append(cost) # Update costs list
+
             if verbose and (i % (epochs // num_prints) == 0 or i == epochs):
                 print(f"Cost on epoch {i}: {round(cost.item(), 5)}") # Optional, output progress
 
@@ -80,8 +80,8 @@ class Model:
 
     # Shuffle data
     def shuffle(self, X, Y):
-        permutation = np.random.permutation(X.shape[1])
-        return X[:, permutation], Y[:, permutation]
+        permutation = np.random.permutation(X.shape[0])
+        return X[permutation, :], Y[permutation, :]
 
     # Forward propagate through model
     def forward(self, A, train=True):
@@ -107,7 +107,7 @@ class Model:
     def backward(self, AL, Y):
         grad = [None] * len(self.layers)
         dA_prev = self.cost_type.backward(AL, Y.reshape(AL.shape)) # Find derivative of cost with respect to final activation
-        
+
         # Find dA, dW, and db for all layers
         for layer in reversed(range(len(self.layers))):
             cache = self.caches[layer]
@@ -118,7 +118,7 @@ class Model:
 
     # Predict given input
     def predict(self, X):
-        return self.forward(X.T, train=False).T
+        return self.forward(X, train=False)
 
     # Save parameters to JSON file
     def save(self, name='parameters.json', dir=''):

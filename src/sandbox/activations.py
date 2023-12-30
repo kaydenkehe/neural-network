@@ -20,6 +20,7 @@ class Linear:
     def forward(self, Z):
         return self.k * Z
 
+    # k
     def backward(self, Z):
         return self.k
 
@@ -30,15 +31,31 @@ class Sigmoid:
     def __init__(self, c=1):
         self.c = c
 
-    # (1 / 1 + e^-z)
+    # 1 / (1 + e^-cz)
     def forward(self, Z):
         return 1 / (1 + np.exp(-self.c * Z))
     
-    # s(z) * (1 - s(z))
+    # c * s(z) * (1 - s(z))
     def backward(self, Z):
         s = self.forward(Z)
         return self.c * s * (1 - s)
 
+# Each output is [0, 1] and sums to 1
+# Used in multi-class classification output layers
+class Softmax:
+    
+        def __init__(self):
+            pass
+    
+        # e^z / sum(e^z)
+        def forward(self, Z):
+            e = np.exp(Z) # Subtract max to avoid nan values
+            return e / np.sum(e, axis=0)
+        
+        # s(z) * (1 - s(z))
+        def backward(self, Z):
+            return 1
+        
 # Rectified Linear Units
 # Most common hidden layer activation
 class ReLU():

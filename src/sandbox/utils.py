@@ -7,8 +7,8 @@ def configure_imports(cuda):
 def gradient_check(model, X, Y, epsilon=1e-4):
 
     # Calculate actual gradient
-    AL = model.forward(X.T)
-    grad = model.backward(AL, Y.T)
+    AL = model.forward(X)
+    grad = model.backward(AL, Y)
 
     # Declare empty arrays for gradient and gradient approximation
     num_params = model.summary(print_table=False)
@@ -22,13 +22,13 @@ def gradient_check(model, X, Y, epsilon=1e-4):
 
                 # Calculate the cost with the parameter shifted by +epsilon
                 model.parameters[layer][param_type][param][0] += epsilon
-                AL_pe = model.forward(X.T)
-                cost_pe = model.cost_type.forward(AL_pe, Y.T)
+                AL_pe = model.forward(X)
+                cost_pe = model.cost_type.forward(AL_pe, Y)
 
                 # Calculate the cost with the parameter shifted by -epsilon
                 model.parameters[layer][param_type][param][0] -= 2 * epsilon
-                AL_ne = model.forward(X.T)
-                cost_ne = model.cost_type.forward(AL_ne, Y.T)
+                AL_ne = model.forward(X)
+                cost_ne = model.cost_type.forward(AL_ne, Y)
 
                 # Reset the parameter
                 model.parameters[layer][param_type][param][0] += epsilon

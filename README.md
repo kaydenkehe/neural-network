@@ -117,6 +117,9 @@ Helper functions found in `\src\sandbox\utils.py`:
 
 - Multiclass classification
 - 2D convolutional layers
+- Reinforcement learning example
+- Numerical stability improvements
+- Add layer output shape to summary
 
 ## Shorthand Notation
 
