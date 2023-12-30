@@ -78,7 +78,7 @@ Helper functions found in `\src\sandbox\utils.py`:
   - point_classifier
 
 **Multiclass Classification**
-  - mnist_classifier
+  - mnist_classifier (TBF)
 
 **Regression**
   - mpg_estimator
@@ -120,7 +120,7 @@ Helper functions found in `\src\sandbox\utils.py`:
 
 ## (Hopefully) Upcoming Features / Changes
 
-- Multiclass classification
+- MNIST example
 - 2D convolutional layers
 - Reinforcement learning example
 - Numerical stability improvements

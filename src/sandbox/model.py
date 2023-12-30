@@ -51,7 +51,6 @@ class Model:
             # Loop through batches
             for X_batch, Y_batch in zip(X_batches, Y_batches):
                 AL = self.forward(X_batch) # Forward propagate
-                # print(AL)
                 cost = self.cost_type.forward(AL, Y_batch) # Calculate cost
                 grad = self.backward(AL, Y_batch) # Calculate gradient
                 self.parameters = self.optimizer.update(self.parameters, self.layers, grad) # Update weights and biases
