@@ -35,7 +35,7 @@ class Dense():
     # Find derivative with respect to weights, biases, and activations for a particular layer
     def backward(self, dA, A_prev, W, b, Z):
         m = A_prev.shape[0]
-        dZ = dA * self.activation.backward(Z) # Evaluate dZ using the derivative of activation function
+        dZ = self.activation.backward(Z, dA) # Evaluate dZ using the derivative of activation function
         dW = 1 / m * np.dot(A_prev.T, dZ) # Calculate derivative with respect to weights
         db = 1 / m * np.sum(dZ, axis=0, keepdims=True) # Calculate derivative with respect to biases
         dA_prev = np.dot(dZ, W.T) # Calculate derivative with respect to the activation of the previous layer
@@ -57,12 +57,12 @@ class Dropout():
     # Randomly set activations to 0
     def forward(self, A, W, b):
         self.mask = np.where(np.random.rand(*A.shape) > self.rate, 1, 0)
-        A = np.multiply(A, self.mask)
+        A *= self.mask
 
         return A, None
     
     # Set activation derivatives to 0 if they were set to 0 during forward propagation
     def backward(self, dA, A_prev, W, b, Z):
-        dA_prev = np.multiply(dA, self.mask)
+        dA_prev = dA * self.mask
 
         return dA_prev, None, None

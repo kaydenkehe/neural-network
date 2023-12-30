@@ -23,12 +23,13 @@ class BinaryCrossentropy:
 # Categorical Cross Entropy - Multiclass classification
 class CategoricalCrossentropy:
 
+    # (-1 / m * sum(Yln(A)))
     def forward(self, AL, Y):
-        return np.squeeze(-1 / Y.shape[0] * np.sum(np.dot(np.log(AL.T), Y)))
+        return np.squeeze(-1 / Y.shape[0] * np.sum(Y * np.log(AL)))
 
+    # -Y / A
     def backward(self, AL, Y):
         return -Y / AL
-        return AL - Y
 
 # Mean Squared Error - Regression
 class MSE:

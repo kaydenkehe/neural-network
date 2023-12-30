@@ -37,7 +37,7 @@ def gradient_check(model, X, Y, epsilon=1e-4):
                 grad_aprox_arr[iter] = (cost_pe - cost_ne) / (2 * epsilon)
 
                 # Append actual gradient value to list (allows for Euclidean distance in later step)
-                grad_arr[iter] = (grad[layer]['d' + param_type][param][0])
+                grad_arr[iter] = grad[layer]['d' + param_type][param][0]
 
                 iter += 1
 

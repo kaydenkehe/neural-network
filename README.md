@@ -77,6 +77,9 @@ Helper functions found in `\src\sandbox\utils.py`:
   - pizza_classifier 
   - point_classifier
 
+**Multiclass Classification**
+  - mnist_classifier
+
 **Regression**
   - mpg_estimator
 
@@ -85,6 +88,7 @@ Helper functions found in `\src\sandbox\utils.py`:
 **Activation Functions**
 - Linear
 - Sigmoid
+- Softmax
 - ReLU
 - Tanh
 - ELU (Exponential Linear Units)
@@ -99,6 +103,7 @@ Helper functions found in `\src\sandbox\utils.py`:
 
 **Cost Functions**
 - BinaryCrossentropy
+- CategoricalCrossentropy
 - MSE (Mean Squared Error)
 - MAE (Mean Absolute Error)
 
@@ -132,10 +137,3 @@ Most (if not all) of the shorthand notation in the code is taken from Andrew Ng.
 - W, b - Weight matrix, bias vector
 - d<W, b, A, AL> - Derivative of value with respect to cost
 - m - Number of training samples
-
-## Notes
-
-- The first hidden layer here is layer zero, as opposed to the convention used by Andrew Ng, where the input layer is layer zero.
-- This documentation is mostly for myself - There's no reason to use this code over something like TensorFlow, Jax, or PyTorch.
-- This project was originally based on the notation and content taught by Andrew Ng in his Deep Learning Specialization course, but it will be transitioning to follow the conventions from in Ovidiu Calin's Deep Learning Architectures book (ISBN 978-3-030-36723-7, https://www.amazon.com/Deep-Learning-Architectures-Mathematical-Approach/dp/3030367207/) if I ever get back around to working on it.
--  The structure of the project is heavily inspired by TensorFlow, as you can see in the example usage.
