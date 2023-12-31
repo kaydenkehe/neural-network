@@ -48,6 +48,16 @@ def gradient_check(model, X, Y, epsilon=1e-4):
 def binary_round(Y):
     return np.where(Y > 0.5, 1, 0)
 
-# Calculate accuracy (for binary classification)
-def binary_evaluate(Y_pred, Y):
-    return np.mean(np.where(binary_round(Y_pred) == Y, 1, 0))
+# Calculate accuracy for binary or multiclass classification
+def evaluate(Y_pred, Y):
+    Y_pred = binary_round(Y_pred) if Y_pred.shape[1] == 1 else argmax(Y_pred)
+    Y = binary_round(Y) if Y.shape[1] == 1 else argmax(Y)
+    return np.mean(np.where(Y_pred == Y, 1, 0))
+
+# One-hot encode labels
+def one_hot(Y, num_classes):
+    return np.eye(num_classes)[Y.reshape(-1)]
+
+# Argmax - return index of highest value in each row
+def argmax(Y):
+    return np.argmax(Y, axis=1)

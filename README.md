@@ -107,24 +107,35 @@ Helper functions found in `\src\sandbox\utils.py`:
 - MSE (Mean Squared Error)
 - MAE (Mean Absolute Error)
 
+**Initializers**
+- zeros
+- ones
+- normal
+- uniform
+- glorot_normal
+- glorot_uniform (default)
+- he_normal
+- he_uniform
+
 **Layer Types**
 - Dense
 - Dropout
 
 **Optimizers**
-- SGD
+- SGD (default)
 - Momentum
 - RMSProp
 - Adam
 - AdaGrad
 
-## (Hopefully) Upcoming Features / Changes
+## Upcoming Features / Changes
 
 - MNIST example
 - 2D convolutional layers
 - Reinforcement learning example
 - Numerical stability improvements
 - Add layer output shape to summary
+- Make NumPy automatic
 
 ## Shorthand Notation
 
