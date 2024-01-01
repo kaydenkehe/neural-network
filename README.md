@@ -87,6 +87,7 @@ Helper functions found in `\src\sandbox\utils.py`:
   - mnist_classifier
 
 **Regression**
+  - diabetes_prediction
   - mpg_estimator
 
 ## Features
