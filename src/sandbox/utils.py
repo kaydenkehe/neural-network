@@ -57,11 +57,10 @@ def gradient_check(model, X, Y, epsilon=1e-4):
 def train_test_split(X, Y, test_size=0.2):
     n = X.shape[0]
     split = int(n * (1 - test_size))
-    return X[:split], X[split:], Y[:split], Y[split:]
+    return (X[:split], Y[:split]), (X[split:], Y[split:])
 
 # Shuffle features and labels in unison
 def shuffle(X, Y):
-    np.random.seed(0)
     permutation = np.random.permutation(X.shape[0])
     return X[permutation, :], Y[permutation, :]
 

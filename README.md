@@ -66,12 +66,14 @@ model.summary()
 ## Utilities
 
 Helper functions found in `\src\sandbox\utils.py`:
-- `configure_cuda` - Configure all modules to use CuPy instead of NumPy, running on Cuda cores.
+- `configure_cuda()` - Configure all modules to use CuPy instead of NumPy, running on Cuda cores.
 - `gradient_check(model, X, Y, epsilon=1e-4)` - Evaluates the correctness of the gradient calculation. Low returned values (less than epsilon squared) indicate that the gradient was computed correctly.
+- `train_test_split(X, Y, test_size=0.2)` - Returns (train_x, train_y), (test_x, test_y), test_size specifies the proportion of features to be used in the test dataset.
+- `shuffle(X, Y)` - Shuffles features and labels in unison.
 - `binary_round(Y)` - Rounds binary classification output.
 - `evaluate(Y_pred, Y)` - Given labels and predictions, returns proportion of correct prediction, works for binary or multiclass classification.
 - `one_hot(Y, num_classes)` - One-hot encodes labels.
-- `argmax(Y)` - Return argmax of labels (index of highest value in each sample prediction).
+- `argmax(Y)` - Returns argmax of labels (index of highest value in each sample prediction).
 
 ## Examples:
 
