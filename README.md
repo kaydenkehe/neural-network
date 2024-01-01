@@ -30,7 +30,7 @@ Configure the model:
 ```{python}
 model.configure(
     cost_type=costs.BinaryCrossentropy(),
-    optimizer=optimizers.Adam(),
+    optimizer=optimizers.SGD(),
     input_size=train_x.shape[1]
 )
 ```
@@ -67,9 +67,9 @@ model.summary()
 
 Helper functions found in `\src\sandbox\utils.py`:
 - `configure_cuda` - Configure all modules to use CuPy instead of NumPy, running on Cuda cores.
-- `gradient_check(model, X, Y, epsilon=1e-4)` - Assess the correctness of the gradient calculation. Low returned values (less than epsilon squared) indicate that the gradient was computed correctly.
+- `gradient_check(model, X, Y, epsilon=1e-4)` - Evaluates the correctness of the gradient calculation. Low returned values (less than epsilon squared) indicate that the gradient was computed correctly.
 - `binary_round(Y)` - Rounds binary classification output.
-- `evaluate(Y_pred, Y)` - Given labels and predictions, return proportion of correct prediction, works for binary or multiclass classification.
+- `evaluate(Y_pred, Y)` - Given labels and predictions, returns proportion of correct prediction, works for binary or multiclass classification.
 - `one_hot(Y, num_classes)` - One-hot encodes labels.
 - `argmax(Y)` - Return argmax of labels (index of highest value in each sample prediction).
 
@@ -93,6 +93,7 @@ Helper functions found in `\src\sandbox\utils.py`:
 - Sigmoid
 - Softmax
 - ReLU
+- LeakyReLU
 - Tanh
 - ELU (Exponential Linear Units)
 - SELU (Scaled Exponential Linear Units)
