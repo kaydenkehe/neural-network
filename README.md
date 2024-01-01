@@ -10,7 +10,7 @@ Install the package: `python -m pip install -e <path to /src>`
 
 Import required packages:
 ```{python}
-from sandbox import activations, costs, initializers, layers, model, utils
+from sandbox import activations, costs, initializers, layers, model, optimizers, utils
 ```
 
 Create the model:
@@ -23,14 +23,14 @@ Add layers to the model:
 model.add(layers.Dense(units=20, activation=activations.ReLU()))
 model.add(layers.Dense(units=7, activation=activations.ReLU()))
 model.add(layers.Dense(units=5, activation=activations.ReLU()))
-model.add(layers.Dense(units=1, activation=activations.Sigmoid()))
+model.add(layers.Dense(units=1, activation=activations.Sigmoid(), initializer=initializers.he_uniform))
 ```
 
 Configure the model:
 ```{python}
 model.configure(
     cost_type=costs.BinaryCrossentropy(),
-    initializer=initializers.Initializers.he,
+    optimizer=optimizers.Adam(),
     input_size=train_x.shape[1]
 )
 ```
@@ -40,16 +40,16 @@ Train the model:
 model.train(
   train_x,
   train_y,
+  epochs,
   learning_rate=0.001,
-  epochs=100,
-  batch_size=32
+  batch_size=m,
   verbose=True
 )
 ```
 
 Predict with the model:
 ```{python}
-prediction = model.predict(image)
+prediction = model.predict(input)
 ```
 
 Save / load model parameters:
@@ -66,9 +66,12 @@ model.summary()
 ## Utilities
 
 Helper functions found in `\src\sandbox\utils.py`:
-- `gradient_check(model, X, Y, epsilon=1e-4)` - Assess the correctness of the gradient calculation. Returns normalized Euclidean distance between the actual and approximated gradient.
-- `binary_round(Y)` - Rounds binary classification output to 0 or 1.
-- `binary_evaluate(Y_pred, Y)` - Given labels and predictions, return proportion of correct predictions.
+- `configure_cuda` - Configure all modules to use CuPy instead of NumPy, running on Cuda cores.
+- `gradient_check(model, X, Y, epsilon=1e-4)` - Assess the correctness of the gradient calculation. Low returned values (less than epsilon squared) indicate that the gradient was computed correctly.
+- `binary_round(Y)` - Rounds binary classification output.
+- `evaluate(Y_pred, Y)` - Given labels and predictions, return proportion of correct prediction, works for binary or multiclass classification.
+- `one_hot(Y, num_classes)` - One-hot encodes labels.
+- `argmax(Y)` - Return argmax of labels (index of highest value in each sample prediction).
 
 ## Examples:
 
@@ -78,7 +81,7 @@ Helper functions found in `\src\sandbox\utils.py`:
   - point_classifier
 
 **Multiclass Classification**
-  - mnist_classifier (TBF)
+  - mnist_classifier
 
 **Regression**
   - mpg_estimator
@@ -130,12 +133,11 @@ Helper functions found in `\src\sandbox\utils.py`:
 
 ## Upcoming Features / Changes
 
-- MNIST example
-- 2D convolutional layers
+- Make NumPy automatic
 - Reinforcement learning example
 - Numerical stability improvements
 - Add layer output shape to summary
-- Make NumPy automatic
+- 2D convolutional layers
 
 ## Shorthand Notation
 

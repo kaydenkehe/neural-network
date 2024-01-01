@@ -1,7 +1,9 @@
-# Handle conditional imports
-def configure_imports(cuda):
+import numpy as np
+
+# Handle CuPy import
+def import_cupy():
     global np
-    np = __import__('cupy' if cuda else 'numpy')
+    np = __import__('cupy')
 
 '''
 Every activation class includes three methods:

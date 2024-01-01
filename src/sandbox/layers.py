@@ -1,9 +1,10 @@
+import numpy as np
 from sandbox import initializers
 
-# Handle conditional imports
-def configure_imports(cuda):
+# Handle CuPy import
+def import_cupy():
     global np
-    np = __import__('cupy' if cuda else 'numpy')
+    np = __import__('cupy')
 
 '''
 Every layer class includes three methods:

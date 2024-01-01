@@ -1,27 +1,22 @@
-import inspect
 import json
-from sandbox import initializers, optimizers
+import numpy as np
+from sandbox import optimizers
 from prettytable import PrettyTable
 
-# Handle conditional imports
-def configure_imports(cuda):
+# Handle CuPy import
+def import_cupy():
     global np
-    np = __import__('cupy' if cuda else 'numpy')
+    np = __import__('cupy')
 
 class Model:
 
     # Initialize model
-    def __init__(self, cuda=False):
+    def __init__(self):
         self.layers = [] # Each item is a layer object
         self.parameters = [] # Each item is a dictionary with a 'W' and 'b' matrix for the weights and biases respectively
         self.caches = [] # Each item is a dictionary with the 'A_prev', 'W', 'b', and 'Z' values for the layer - Used in backprop
         self.costs = [] # Each item is the cost for an epoch
-
-        # Configure all scripts to run on either CuPy or NumPy
-        import sandbox
-        for module, _ in inspect.getmembers(sandbox, inspect.ismodule):
-            exec(f'sandbox.{module}.configure_imports(cuda)')
-
+            
     # Add layer to model
     def add(self, layer):
         self.layers.append(layer)

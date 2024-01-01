@@ -1,7 +1,16 @@
-# Handle conditional imports
-def configure_imports(cuda):
+import inspect
+import numpy as np
+import sandbox
+
+# Handle CuPy import
+def import_cupy():
     global np
-    np = __import__('cupy' if cuda else 'numpy')
+    np = __import__('cupy')
+
+# Handle CuPy import for all modules
+def configure_cupy():
+    for module, _ in inspect.getmembers(sandbox, inspect.ismodule):
+        exec(f'sandbox.{module}.import_cupy()')
 
 # Gradient checking
 def gradient_check(model, X, Y, epsilon=1e-4):
@@ -46,7 +55,7 @@ def gradient_check(model, X, Y, epsilon=1e-4):
 
 # 1 if output > 0.5, 0 otherwise
 def binary_round(Y):
-    return np.where(Y > 0.5, 1, 0)
+    return np.squeeze(np.where(Y > 0.5, 1, 0))
 
 # Calculate accuracy for binary or multiclass classification
 def evaluate(Y_pred, Y):
@@ -60,4 +69,4 @@ def one_hot(Y, num_classes):
 
 # Argmax - return index of highest value in each row
 def argmax(Y):
-    return np.argmax(Y, axis=1)
+    return np.squeeze(np.argmax(Y, axis=1))
