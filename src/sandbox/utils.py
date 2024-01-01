@@ -53,6 +53,18 @@ def gradient_check(model, X, Y, epsilon=1e-4):
             # Return representation of distance between actual and approximate gradients
             return np.linalg.norm(grad_arr - grad_aprox_arr) / (np.linalg.norm(grad_arr) + np.linalg.norm(grad_aprox_arr))
 
+# Split train and test data
+def train_test_split(X, Y, test_size=0.2):
+    n = X.shape[0]
+    split = int(n * (1 - test_size))
+    return X[:split], X[split:], Y[:split], Y[split:]
+
+# Shuffle features and labels in unison
+def shuffle(X, Y):
+    np.random.seed(0)
+    permutation = np.random.permutation(X.shape[0])
+    return X[permutation, :], Y[permutation, :]
+
 # 1 if output > 0.5, 0 otherwise
 def binary_round(Y):
     return np.squeeze(np.where(Y > 0.5, 1, 0))

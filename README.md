@@ -81,6 +81,7 @@ Helper functions found in `\src\sandbox\utils.py`:
   - point_classifier
 
 **Multiclass Classification**
+  - iris_classifier
   - mnist_classifier
 
 **Regression**
@@ -134,10 +135,7 @@ Helper functions found in `\src\sandbox\utils.py`:
 
 ## Upcoming Features / Changes
 
-- Make NumPy automatic
 - Reinforcement learning example
-- Numerical stability improvements
-- Add layer output shape to summary
 - 2D convolutional layers
 
 ## Shorthand Notation

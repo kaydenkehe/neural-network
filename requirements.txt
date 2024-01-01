@@ -1,7 +1,12 @@
 cupy_cuda12x==12.2.0
 h5py==3.10.0
+keras==2.15.0
+numpy==1.26.2
 opencv_contrib_python==4.8.1.78
 pandas==2.1.4
 Pillow==10.0.1
 Pillow==10.1.0
+prettytable==3.9.0
 setuptools==68.2.2
+tensorflow==2.15.0
+tensorflow_intel==2.15.0
