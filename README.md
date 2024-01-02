@@ -77,6 +77,9 @@ Helper functions found in `\src\sandbox\utils.py`:
 
 ## Examples:
 
+**Reinforcement Learning**
+  - pong_rl (Not finished - Model not trained)
+
 **Binary Classification**
   - cat_classifier
   - pizza_classifier 
@@ -139,6 +142,8 @@ Helper functions found in `\src\sandbox\utils.py`:
 ## Upcoming Features / Changes
 
 - Reinforcement learning example
+- L2 Regularization
+- Support for validation sets
 - 2D convolutional layers
 
 ## Shorthand Notation
